@@ -4,7 +4,7 @@ const koaStatic = require('koa-static')
 const path = require('path')
 const app = new Koa()
 const resolve = (file) => path.resolve(__dirname, file)
-const NODE_ENV_PROD = process.env.NODE_ENV === 'production'
+const isProd = process.env.NODE_ENV === 'production'
 
 // 获取render
 const { createBundleRenderer } = require('vue-server-renderer')

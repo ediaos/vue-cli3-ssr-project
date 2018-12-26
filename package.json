@@ -3,14 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vue-cli-service serve --open",
-    "dev:ssr": "cross-env BUILD_TARGET=node vue-cli-service serve --open",
-    "build:client": "vue-cli-service build --modern",
-    "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --modern --no-clean",
+    "dev": "vue-cli-service serve",
+    "dev:ssr": "cross-env BUILD_TARGET=node node ./build/setup-dev-server",
+    "build:client": "vue-cli-service build",
+    "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",
     "build": "npm run build:client && npm run build:ssr",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "concurrently \"npm run dev\" \"npm run dev:ssr\" "
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "koa": "^2.6.2",
     "koa-static": "^5.0.0",
     "vue": "^2.5.17",
@@ -24,6 +26,7 @@
     "@vue/cli-service": "^3.2.0",
     "@vue/eslint-config-prettier": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "concurrently": "^4.1.0",
     "cross-env": "^5.2.0",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0-0",

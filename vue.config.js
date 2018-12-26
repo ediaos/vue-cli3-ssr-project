@@ -4,14 +4,18 @@ const nodeExternals = require("webpack-node-externals");
 const merge = require("lodash.merge");
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
-
+const isProd = process.env.NODE_ENV === 'production'
 module.exports = {
+  baseUrl: isProd ? '' : 'http://127.0.0.1:8080',
+  devServer: {
+    headers: {'Access-Control-Allow-Origin': '*'}
+  },
   configureWebpack: config => ({
     entry: `./src/entry-${target}.js`,
     target: TARGET_NODE ? "node" : "web",
     node: TARGET_NODE ? undefined : false,
     output: {
-      libraryTarget: TARGET_NODE ? "commonjs2" : undefined
+      libraryTarget: TARGET_NODE ? "commonjs2" : undefined,
     },
     // https://webpack.js.org/configuration/externals/#function
     // https://github.com/liady/webpack-node-externals
