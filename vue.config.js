@@ -44,5 +44,11 @@ module.exports = {
           optimizeSSR: false
         });
       });
+    // fix ssr hot update bug
+    if(!isProd && TARGET_NODE){
+      config.plugins
+        .delete('hmr')
+    }
+    
   }
 };
