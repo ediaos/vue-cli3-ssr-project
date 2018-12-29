@@ -6,7 +6,7 @@ const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
 const isProd = process.env.NODE_ENV === 'production'
 module.exports = {
-  baseUrl: isProd ? '' : 'http://127.0.0.1:8080',
+  // baseUrl: isProd ? '' : 'http://127.0.0.1:8080',
   devServer: {
     headers: {'Access-Control-Allow-Origin': '*'}
   },
@@ -34,13 +34,13 @@ module.exports = {
     },
     plugins: [ TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin()]
   }),
-  // TODO: 需要确认有啥作用
   chainWebpack: config => {
     config.module
       .rule("vue")
       .use("vue-loader")
       .tap(options => {
         merge(options, {
+          // TODO: 需要确认有啥作用
           optimizeSSR: false
         });
       });

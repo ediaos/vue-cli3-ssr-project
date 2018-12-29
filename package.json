@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vue-cli-service serve",
-    "dev:ssr": "cross-env BUILD_TARGET=node node ./build/setup-dev-server",
+    "dev:ssr": "cross-env BUILD_TARGET=node node ./server",
     "build:client": "vue-cli-service build",
     "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",
     "build": "npm run build:client && npm run build:ssr",
@@ -31,6 +31,7 @@
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0-0",
     "lodash.merge": "^4.6.1",
+    "lru-cache": "^5.1.1",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
     "vue-template-compiler": "^2.5.17",
