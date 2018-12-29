@@ -7,7 +7,7 @@ const resolve = (file) => path.resolve(__dirname, file)
 // const morgan = require('koa-morgan')  for logs
 const app = new Koa()
 
-const isProd = true//process.env.NODE_ENV === 'production'
+const isProd = process.env.NODE_ENV === 'production'
 const template = fs.readFileSync(resolve("./index.template.html"), "utf-8")
 const { createBundleRenderer } = require('vue-server-renderer')
 const setupServer = require(`${isProd?'./setup-prod-server':'./setup-dev-server'}`)
@@ -30,7 +30,6 @@ setupServer(app,(bundle, options)=>{
       runInNewContext: false
     })
   )
-  console.log('---renderer update---',renderer)
 })
 
 async function ssrRequestHandle(ctx, next) {
@@ -42,16 +41,12 @@ async function ssrRequestHandle(ctx, next) {
     cookies: ctx.cookies, // for cookie using
     userAgent: ctx.header['user-agent']
   }
-  console.log('----------ssrRequestHandle' ,renderer)
-  renderer.renderToString(context, (err, html) => {
-    if(!err){
-      ctx.body = html
-    }
-    else{
-      handleError(ctx,err)
-    }
-    console.log(`[DATE] whole request: ${Date.now() - s}ms  url=${ctx.url}`)
-  })    
+  
+  try {
+    ctx.body = await renderer.renderToString(context)
+  } catch (err) {
+    handleError(ctx,err)
+  }
 }
 
 const handleError = (ctx,err) => {
@@ -74,6 +69,14 @@ app.use(koaStatic(resolve('../dist')))
 
 // 处理请求
 app.use(ssrRequestHandle)
+// 处理请求
+// app.use(async (ctx, next)=>{
+//   const context = {
+//     title: 'ssr test',
+//     url: ctx.url
+//   }
+//   ctx.body = await renderer.renderToString(context)
+// })
 
 app.listen(9080)
   .on('listening',()=>{

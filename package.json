@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vue-cli-service serve",
+    "dev:client": "vue-cli-service serve",
     "dev:ssr": "cross-env BUILD_TARGET=node node ./server",
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:ssr\" ",
     "build:client": "vue-cli-service build",
     "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",
     "build": "npm run build:client && npm run build:ssr",
     "lint": "vue-cli-service lint",
-    "test": "concurrently \"npm run dev\" \"npm run dev:ssr\" "
+    "dist": "cross-env NODE_ENV=production node ./server"
   },
   "dependencies": {
     "axios": "^0.18.0",
