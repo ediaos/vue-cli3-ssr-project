@@ -69,14 +69,6 @@ app.use(koaStatic(resolve('../dist')))
 
 // 处理请求
 app.use(ssrRequestHandle)
-// 处理请求
-// app.use(async (ctx, next)=>{
-//   const context = {
-//     title: 'ssr test',
-//     url: ctx.url
-//   }
-//   ctx.body = await renderer.renderToString(context)
-// })
 
 app.listen(9080)
   .on('listening',()=>{
