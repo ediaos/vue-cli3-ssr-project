@@ -27,7 +27,6 @@ setupServer(app,(bundle, options)=>{
       }),
       // this is only neede when vue-server-renderer is npm-linked
       // basedir: resolve('../dist'),
-      // recommended for performance
       runInNewContext: false
     })
   )

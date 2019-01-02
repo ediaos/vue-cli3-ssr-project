@@ -56,21 +56,13 @@ module.exports = {
     ]
   }),
   chainWebpack: config => {
-    const htmlPlugin = config.plugin('html')
-    const vueRule = config.module.rule("vue")
-    
-    // vueRule.use("vue-loader")
-    //   .tap(options => {
-    //     merge(options, {
-    //       // TODO: 需要确认有啥作用
-    //       optimizeSSR: false
-    //     });
-    //   });
-    
-    htmlPlugin.tap(args=>{
+
+    // reset public/index.html to static/index.html
+    config.plugin('html').tap(args=>{
       args[0].template = resolve('./static/index.html')
       return args
     })
+
     // fix ssr hot update bug
     if(!isProd && TARGET_NODE){
       config.plugins
