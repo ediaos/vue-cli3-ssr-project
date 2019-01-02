@@ -3,6 +3,7 @@ const webpack = require('webpack')
 const MemoryFS = require('memory-fs')
 const webpackConfig = require('@vue/cli-service/webpack.config')
 const axios = require('axios')
+const chalk = require('chalk')
 
 
 let renderer = null
@@ -39,7 +40,7 @@ serverCompiler.watch({},(err,stats)=>{
 })
 
 const updateClientManifest = async()=>{
-  const result = await axios.get('http://localhost:8080/vue-ssr-client-manifest.json')
+  const result = await axios.get('http://localhost:8081/vue-ssr-client-manifest.json')
   if(result.data){
     clientManifest = result.data
   }
@@ -57,6 +58,17 @@ const clientCompilerUpdate = async ()=>{
   }
 }
 
+
+
+function serverLog(){
+  setTimeout(() => {
+    console.log()
+    console.log(` SSR App running at:   ${chalk.cyan('http://localhost:8080')}`)
+    console.log(` ${chalk.yellow('Current page is SSR ,"http://localhost:8081" is a static path')}`)
+  }, 3000);
+}
+
 module.exports = async function setupServer (app, createRenderer){
   renderer = createRenderer 
+  serverLog()
 }

@@ -5,7 +5,7 @@
   "scripts": {
     "dev:client": "vue-cli-service serve",
     "dev:ssr": "cross-env BUILD_TARGET=node node ./server",
-    "dev": "concurrently \"cross-env BUILD_CLIENT_TARGET=SSR npm run dev:client\" \"npm run dev:ssr\" ",
+    "dev": "cross-env BUILD_CLIENT_TARGET=SSR concurrently \"vue-cli-service serve --port 8081\" \"npm run dev:ssr\" ",
     "build:client": "vue-cli-service build",
     "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",
     "build": "npm run build:client && npm run build:ssr",
@@ -15,6 +15,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "koa": "^2.6.2",
+    "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
     "vue": "^2.5.21",
     "vue-router": "^3.0.2",
@@ -27,6 +28,7 @@
     "@vue/cli-service": "^3.2.2",
     "@vue/eslint-config-prettier": "^4.0.1",
     "babel-eslint": "^10.0.1",
+    "chalk": "^2.4.1",
     "concurrently": "^4.1.0",
     "cross-env": "^5.2.0",
     "eslint": "^5.8.0",

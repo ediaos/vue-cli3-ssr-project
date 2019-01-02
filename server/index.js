@@ -1,7 +1,8 @@
 const fs = require("fs");
 const path = require('path')
 const Koa = require('koa')
-const koaStatic = require('koa-static')
+const static = require('koa-static')
+const mount = require('koa-mount');
 const LRU = require('lru-cache')
 const resolve = (file) => path.resolve(__dirname, file)
 // const morgan = require('koa-morgan')  for logs
@@ -65,12 +66,12 @@ const handleError = (ctx,err) => {
 }
 
 //开放dist目录
-app.use(koaStatic(resolve('../dist')))
+app.use(mount('/static',static(resolve('../static'))))
 
 // 处理请求
 app.use(ssrRequestHandle)
 
-app.listen(9080)
+app.listen(8080)
   .on('listening',()=>{
     console.log(`server started at localhost:9080`);
   })

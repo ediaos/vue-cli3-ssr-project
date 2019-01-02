@@ -9,12 +9,12 @@ const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
 const isProd = process.env.NODE_ENV === 'production'
 const isSSRClient = process.env.BUILD_CLIENT_TARGET === 'SSR'
-// baseUrl: isProd ? '/static' : '/',
+
 module.exports = {
-  baseUrl: isSSRClient&&!isProd ? 'http://127.0.0.1:8080':'',
+  baseUrl: !isProd && isSSRClient? 'http://localhost:8081':'',
   assetsDir: 'static',
   devServer: {
-    headers: {'Access-Control-Allow-Origin': '*'},
+    headers: {'Access-Control-Allow-Origin': '*'}
   },
   configureWebpack: config => ({
     entry: `./src/entry-${target}.js`,
