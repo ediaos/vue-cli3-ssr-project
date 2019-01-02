@@ -2,20 +2,26 @@ const VueSSRServerPlugin = require("vue-server-renderer/server-plugin");
 const VueSSRClientPlugin = require("vue-server-renderer/client-plugin");
 const nodeExternals = require("webpack-node-externals");
 const merge = require("lodash.merge");
+var CopyWebpackPlugin = require('copy-webpack-plugin')
+const path = require('path')
+const resolve = (file) => path.resolve(__dirname, file)
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
 const isProd = process.env.NODE_ENV === 'production'
+const isSSRClient = process.env.BUILD_CLIENT_TARGET === 'SSR'
+// baseUrl: isProd ? '/static' : '/',
 module.exports = {
-  baseUrl: isProd ? '' : 'http://127.0.0.1:8080',
+  baseUrl: isSSRClient&&!isProd ? 'http://127.0.0.1:8080':'',
+  assetsDir: 'static',
   devServer: {
-    headers: {'Access-Control-Allow-Origin': '*'}
+    headers: {'Access-Control-Allow-Origin': '*'},
   },
   configureWebpack: config => ({
     entry: `./src/entry-${target}.js`,
     target: TARGET_NODE ? "node" : "web",
     node: TARGET_NODE ? undefined : false,
     output: {
-      libraryTarget: TARGET_NODE ? "commonjs2" : undefined,
+      libraryTarget: TARGET_NODE ? "commonjs2" : undefined
     },
     // https://webpack.js.org/configuration/externals/#function
     // https://github.com/liady/webpack-node-externals
@@ -32,18 +38,39 @@ module.exports = {
     optimization: {
       splitChunks: undefined
     },
-    plugins: [ TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin()]
+    plugins: [ 
+      TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin(),
+      new CopyWebpackPlugin(
+        [
+          {
+            from: resolve('./static'),
+            to: resolve('./dist/static'),
+            toType: 'dir',
+            ignore: [
+              'index.html',
+              '.DS_Store'
+            ]
+          }
+        ]
+      )
+    ]
   }),
   chainWebpack: config => {
-    config.module
-      .rule("vue")
-      .use("vue-loader")
-      .tap(options => {
-        merge(options, {
-          // TODO: 需要确认有啥作用
-          optimizeSSR: false
-        });
-      });
+    const htmlPlugin = config.plugin('html')
+    const vueRule = config.module.rule("vue")
+    
+    // vueRule.use("vue-loader")
+    //   .tap(options => {
+    //     merge(options, {
+    //       // TODO: 需要确认有啥作用
+    //       optimizeSSR: false
+    //     });
+    //   });
+    
+    htmlPlugin.tap(args=>{
+      args[0].template = resolve('./static/index.html')
+      return args
+    })
     // fix ssr hot update bug
     if(!isProd && TARGET_NODE){
       config.plugins

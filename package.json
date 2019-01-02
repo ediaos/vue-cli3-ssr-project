@@ -5,7 +5,7 @@
   "scripts": {
     "dev:client": "vue-cli-service serve",
     "dev:ssr": "cross-env BUILD_TARGET=node node ./server",
-    "dev": "concurrently \"npm run dev:client\" \"npm run dev:ssr\" ",
+    "dev": "concurrently \"cross-env BUILD_CLIENT_TARGET=SSR npm run dev:client\" \"npm run dev:ssr\" ",
     "build:client": "vue-cli-service build",
     "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",
     "build": "npm run build:client && npm run build:ssr",
@@ -16,16 +16,16 @@
     "axios": "^0.18.0",
     "koa": "^2.6.2",
     "koa-static": "^5.0.0",
-    "vue": "^2.5.17",
-    "vue-router": "^3.0.1",
+    "vue": "^2.5.21",
+    "vue-router": "^3.0.2",
     "vue-server-renderer": "^2.5.21",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.2.0",
-    "@vue/cli-plugin-eslint": "^3.2.0",
-    "@vue/cli-service": "^3.2.0",
-    "@vue/eslint-config-prettier": "^4.0.0",
+    "@vue/cli-plugin-babel": "^3.2.2",
+    "@vue/cli-plugin-eslint": "^3.2.2",
+    "@vue/cli-service": "^3.2.2",
+    "@vue/eslint-config-prettier": "^4.0.1",
     "babel-eslint": "^10.0.1",
     "concurrently": "^4.1.0",
     "cross-env": "^5.2.0",
@@ -35,7 +35,7 @@
     "lru-cache": "^5.1.1",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
-    "vue-template-compiler": "^2.5.17",
+    "vue-template-compiler": "^2.5.21",
     "webpack-node-externals": "^1.7.2"
   }
 }
