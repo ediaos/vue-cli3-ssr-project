@@ -2,19 +2,20 @@ const VueSSRServerPlugin = require("vue-server-renderer/server-plugin");
 const VueSSRClientPlugin = require("vue-server-renderer/client-plugin");
 const nodeExternals = require("webpack-node-externals");
 const merge = require("lodash.merge");
-var CopyWebpackPlugin = require('copy-webpack-plugin')
-const path = require('path')
-const resolve = (file) => path.resolve(__dirname, file)
+const webpack = require("webpack");
+var CopyWebpackPlugin = require("copy-webpack-plugin");
+const path = require("path");
+const resolve = file => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
-const isProd = process.env.NODE_ENV === 'production'
-const isSSRClient = process.env.BUILD_CLIENT_TARGET === 'SSR'
+const isProd = process.env.NODE_ENV === "production";
+const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
 
 module.exports = {
-  baseUrl: !isProd && isSSRClient? 'http://localhost:8081':'',
-  assetsDir: 'static',
+  baseUrl: !isProd && isSSRClient ? "http://localhost:8081" : "",
+  assetsDir: "static",
   devServer: {
-    headers: {'Access-Control-Allow-Origin': '*'}
+    headers: { "Access-Control-Allow-Origin": "*" }
   },
   configureWebpack: config => ({
     entry: `./src/entry-${target}.js`,
@@ -38,36 +39,33 @@ module.exports = {
     optimization: {
       splitChunks: undefined
     },
-    plugins: [ 
+    plugins: [
       TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin(),
-      new CopyWebpackPlugin(
-        [
-          {
-            from: resolve('./static'),
-            to: resolve('./dist/static'),
-            toType: 'dir',
-            ignore: [
-              'index.html',
-              '.DS_Store'
-            ]
-          }
-        ]
-      )
+      new webpack.DefinePlugin({
+        "process.env.BUILD_CLIENT_TARGET": `"${
+          process.env.BUILD_CLIENT_TARGET
+        }"`
+      }),
+      new CopyWebpackPlugin([
+        {
+          from: resolve("./static"),
+          to: resolve("./dist/static"),
+          toType: "dir",
+          ignore: ["index.html", ".DS_Store"]
+        }
+      ])
     ]
   }),
   chainWebpack: config => {
-
     // reset public/index.html to static/index.html
-    config.plugin('html').tap(args=>{
-      args[0].template = resolve('./static/index.html')
-      return args
-    })
+    config.plugin("html").tap(args => {
+      args[0].template = resolve("./static/index.html");
+      return args;
+    });
 
     // fix ssr hot update bug
-    if(!isProd && TARGET_NODE){
-      config.plugins
-        .delete('hmr')
+    if (!isProd && TARGET_NODE) {
+      config.plugins.delete("hmr");
     }
-    
   }
 };

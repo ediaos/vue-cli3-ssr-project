@@ -5,6 +5,11 @@ import { createStore } from "./store";
 //关闭生产模式下给出的提示
 Vue.config.productionTip = false;
 
+// for using vant components
+import Vant from "vant";
+import "vant/lib/index.css";
+Vue.use(Vant);
+
 export function createApp() {
   const router = createRouter();
   const store = createStore();
