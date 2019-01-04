@@ -3,7 +3,7 @@ import App from "./App.vue";
 import { createRouter } from "./router";
 import { createStore } from "./store";
 //关闭生产模式下给出的提示
-Vue.config.productionTip = false;
+Vue.config.productionTip = true;
 
 // for using vant components
 import Vant from "vant";

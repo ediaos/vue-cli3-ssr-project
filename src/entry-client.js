@@ -11,10 +11,15 @@ const loading = isLoading => {
     Vue.prototype.$toast.loading({
       mask: true,
       message: "加载中...",
+      overlayStyle: {
+        backgroundColor: 'rgba(0, 0, 0, 0.1)'
+      },
       duration: 0
     });
   } else {
-    Vue.prototype.$toast.clear();
+    Vue.prototype.$nextTick(()=>{
+      Vue.prototype.$toast.clear();
+    })
   }
 };
 
