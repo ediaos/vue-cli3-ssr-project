@@ -72,7 +72,10 @@ if (window.__INITIAL_STATE__) {
 
 router.onReady(() => {
   console.log('----------onReady')
-  test()
+  if (!isSSRClient) {
+    asyncDatePromiseHook()
+  }
+  
   // Add router hook for handling asyncData before router enter.
   router.beforeResolve((to, from, next) => {
     console.log('-------router.beforeResolve')
@@ -82,24 +85,6 @@ router.onReady(() => {
 });
 
 app.$mount("#app");
-
-function asyncDatePromiseHook(vm,route,next){
-  const { asyncData } = vm.$options;
-    if (asyncData) {
-      loading(true);
-      asyncData({
-        store:vm.$store,
-        route,
-        cookies: cookies.get(),
-        userAgent
-      }).finally(() => {
-        loading(false);
-        next&&next();
-      });
-    } else {
-      next&&next();
-    }
-}
 
 function beforeRouteAsyncDatePromiseHandle(to, from, next) {
   const matched = router.getMatchedComponents(to);
@@ -126,12 +111,13 @@ function beforeRouteAsyncDatePromiseHandle(to, from, next) {
   next()
 }
 
-function test(){
+function asyncDatePromiseHook(){
   const matchedComponents = router.getMatchedComponents();
   // no matched routes
   if (!matchedComponents.length) {
     return 
   }
+  loading(true);
   // Call fetchData hooks on components matched by the route.
   // A preFetch hook dispatches a store action and returns a Promise,
   // which is resolved when the action is complete and store state has been
@@ -147,6 +133,8 @@ function test(){
           userAgent
         })
     )
-  )
+  ).finally(()=>{
+    loading(false);
+  })
   matchedComponents.map(c => c.asyncData&&(c.asyncData._dataPromise = promise))    
 }
