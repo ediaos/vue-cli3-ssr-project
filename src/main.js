@@ -21,28 +21,28 @@ export function createApp() {
   return { app, router, store };
 }
 
-// Vue.mixin({
-//   beforeCreate () {
-//     if(this.$options.asyncData){
-//       console.log('this.$options._dataPromise',this.$options)
-//       this.dataPromiseDone = (cb)=>{
-//         if(this.$options.asyncData._dataPromise){
-//           this.$options.asyncData._dataPromise
-//             .then(res=>cb(true,res))
-//             .catch(err=>cb(false,err))
-//             .finally(()=>{
-//               console.log('dataPromiseDone----done--cb')
-//               this.$options.asyncData._dataPromise = null
-//             })
-//         }
-//         else{
-//           console.log('dataPromiseDone----cb')
-//           cb(true)
-//         }
-//       }
-//       // this.dataPromise = new Promise((resolve,reject)=>{
-//       //   return this._dataPromise ? this._dataPromise.finally(()=>this._dataPromise = null) : resolve()
-//       // })
-//     }
-//   }
-// })
+Vue.mixin({
+  beforeCreate () {
+    if(this.$options.asyncData){
+      console.log('this.$options._dataPromise',this.$options)
+      this.dataPromiseDone = (cb)=>{
+        if(this.$options.asyncData._dataPromise){
+          this.$options.asyncData._dataPromise
+            .then(res=>cb(true,res))
+            .catch(err=>cb(false,err))
+            .finally(()=>{
+              console.log('dataPromiseDone----done--cb')
+              this.$options.asyncData._dataPromise = null
+            })
+        }
+        else{
+          console.log('dataPromiseDone----cb')
+          cb(true)
+        }
+      }
+      // this.dataPromise = new Promise((resolve,reject)=>{
+      //   return this._dataPromise ? this._dataPromise.finally(()=>this._dataPromise = null) : resolve()
+      // })
+    }
+  }
+})

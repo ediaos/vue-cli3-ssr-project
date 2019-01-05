@@ -31,15 +31,13 @@ export default {
       this.topicsList[0].title = '111111111'
     }
     this.dataPromiseDone&&this.dataPromiseDone((isSucess)=>{
-      console.log('created---------dataPromise',isSucess,this.topicsList)
+      console.log('created---------dataPromise',isSucess)
       this.topicsList[0].title = '22222222'
     })
-    console.log('created---------created')
   },
   mounted(){
     this.isMounted = true
     this.dataPromiseDone((isSucess)=>{
-      // this.$options.__isAsyncDataLoad = true
       console.log('mounted---------dataPromise',isSucess)
     })
   },
