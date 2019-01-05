@@ -12,7 +12,7 @@ const isProd = process.env.NODE_ENV === "production";
 const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
 
 module.exports = {
-  baseUrl: !isProd && isSSRClient ? "http://localhost:8081" : "",
+  baseUrl: !isProd && isSSRClient ? "http://localhost:8081" : "/",
   assetsDir: "static",
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" }
