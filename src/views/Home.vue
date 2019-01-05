@@ -1,6 +1,7 @@
 <template>
   <div class="home">
-    <img v-if="isMounted" alt="Vue logo" src="../assets/logo.png">
+    <!-- v-if="isMounted" -->
+    <img alt="Vue logo" src="../assets/logo.png">
     <div v-if="topicsList" class="topics-list">
       <topic-item v-for="item in topicsList" :key="item.id" :topicInfo="item" @click="navDetail(item)"/>
     </div>
@@ -25,8 +26,22 @@ export default {
   asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
     return store.dispatch('FETCH_TOPICS_LIST')
   },
+  created(){
+    if(this.topicsList){
+      this.topicsList[0].title = '111111111'
+    }
+    this.dataPromiseDone&&this.dataPromiseDone((isSucess)=>{
+      console.log('created---------dataPromise',isSucess,this.topicsList)
+      this.topicsList[0].title = '22222222'
+    })
+    console.log('created---------created')
+  },
   mounted(){
     this.isMounted = true
+    this.dataPromiseDone((isSucess)=>{
+      // this.$options.__isAsyncDataLoad = true
+      console.log('mounted---------dataPromise',isSucess)
+    })
   },
   methods:{
     navDetail(detail){

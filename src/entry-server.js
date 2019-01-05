@@ -30,7 +30,7 @@ export default context => {
       // A preFetch hook dispatches a store action and returns a Promise,
       // which is resolved when the action is complete and store state has been
       // updated.
-      Promise.all(
+      const promise = Promise.all(
         matchedComponents.map(
           ({ asyncData }) =>
             asyncData &&
@@ -42,7 +42,7 @@ export default context => {
             })
         )
       )
-        .then(() => {
+        .then((res) => {
           console.log(
             `[DATE] data pre-fetch: ${Date.now() - beginTime}ms url=${fullPath}`
           );
@@ -56,6 +56,7 @@ export default context => {
           resolve(app);
         })
         .catch(reject);
+      matchedComponents.map(c => c.asyncData&&(c.asyncData._dataPromise = promise))
     }, reject);
   });
 };
