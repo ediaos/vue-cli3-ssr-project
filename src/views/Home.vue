@@ -24,13 +24,13 @@ export default {
     ...mapState(['topicsList'])
   },
   asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
-    return store.dispatch('FETCH_TOPICS_LIST')
+    return store.dispatch('FETCH_TOPICS_LIST',{ cookies })
   },
   mounted(){
     this.isMounted = true
     // 注册数据回调处理,仅限mounted后面生命周期中使用
     this.dataPromise.then(()=>{
-      this.topicsList.forEach(item => {
+      this.topicsList&&this.topicsList.forEach(item => {
         item.create_at = new Date(item.create_at).toDateString()
       });
     })

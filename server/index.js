@@ -2,11 +2,13 @@ const fs = require("fs");
 const path = require('path')
 const Koa = require('koa')
 const static = require('koa-static')
+const cookie = require('koa-cookie').default;
 const mount = require('koa-mount');
 const LRU = require('lru-cache')
 const resolve = (file) => path.resolve(__dirname, file)
 // const morgan = require('koa-morgan')  for logs
 const app = new Koa()
+app.use(cookie())
 
 const isProd = process.env.NODE_ENV === 'production'
 const template = fs.readFileSync(resolve("./index.template.html"), "utf-8")
@@ -38,7 +40,7 @@ async function ssrRequestHandle(ctx, next) {
   const context = {
     title: 'SSR PAGE', // default title
     url: ctx.url,
-    cookies: ctx.cookies, // for cookie using
+    cookies: ctx.cookie, // for cookie using
     userAgent: ctx.header['user-agent']
   }
   
@@ -61,7 +63,7 @@ const handleError = (ctx,err) => {
     ctx.status = 500
     ctx.body = '500 | Internal Server Error'
   }
-  console.error(`error during render : url=${ctx.url} err=${JSON.stringify(err)}`)
+  console.error(`error during render : url=${ctx.url} err=`,err)
 }
 
 //开放dist目录

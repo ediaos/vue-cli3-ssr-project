@@ -44,7 +44,8 @@ module.exports = {
       new webpack.DefinePlugin({
         "process.env.BUILD_CLIENT_TARGET": `"${
           process.env.BUILD_CLIENT_TARGET
-        }"`
+        }"`,
+        "process.env.BUILD_TARGET": `"${process.env.BUILD_TARGET}"`
       }),
       new CopyWebpackPlugin([
         {
