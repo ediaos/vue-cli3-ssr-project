@@ -4,6 +4,7 @@ import { createApp } from "./main";
 const { app, router, store } = createApp();
 const userAgent = navigator.userAgent;
 const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
+let isSSRClientFirstLoad = isSSRClient
 
 const loading = isLoading => {
   if (isLoading) {
@@ -16,24 +17,18 @@ const loading = isLoading => {
       duration: 0
     });
   } else {
-    Vue.prototype.$nextTick(()=>{
-      Vue.prototype.$toast.clear();
-    })
+    Vue.prototype.$toast.clear();
   }
 };
 
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
+  beforeMount () {
+    asyncDataPromise(this,this.$route)
+  },
   beforeRouteUpdate(to, from, next) {
-    const { asyncData } = this.$options;
-    if (asyncData) {
-      asyncDatePromiseHook([this.$options],to)
-        .then(()=>{
-          next();
-        })
-    } else {
-      next();
-    }
+    asyncDataPromise(this,to,true)
+    next()
   }
 });
 
@@ -44,59 +39,56 @@ if (window.__INITIAL_STATE__) {
 }
 
 router.onReady(() => {
-  if (!isSSRClient) {
-    onReadyAsyncDataPromiseHook()
+  if (!isSSRClient){
+    checkIsNeedLoading(router.getMatchedComponents(),router.currentRoute)
   }
   
   // Add router hook for handling asyncData before router enter.
   router.beforeResolve((to, from, next) => {
-    beforeResolveAsyncDateHandle(to, from, next);
-    next();
+    isSSRClientFirstLoad = false
+    beforeResolveHandle(to,from)
+    next()
   });
   app.$mount("#app");
 });
 
-function beforeResolveAsyncDateHandle(to, from) {
+function beforeResolveHandle(to,from) {
   const matched = router.getMatchedComponents(to);
   const prevMatched = router.getMatchedComponents(from);
   let diffed = false;
   const activated = matched.filter((c, i) => {
     return diffed || (diffed = prevMatched[i] !== c);
   });
-  asyncDatePromiseHook(activated,to)
+  checkIsNeedLoading(activated)
 }
 
-function onReadyAsyncDataPromiseHook(){
-  const matchedComponents = router.getMatchedComponents();
-  // no matched routes
-  if (!matchedComponents.length) {
-    return 
-  }
-  asyncDatePromiseHook(matchedComponents,router.currentRoute)
-}
-
-function asyncDatePromiseHook(matchedComponents,route){
+function checkIsNeedLoading(matchedComponents){
   const asyncDataHooks = matchedComponents.map(c => c.asyncData).filter(_ => _);
-  if (!asyncDataHooks.length) return Promise.resolve()
-
-  // Call fetchData hooks on components matched by the route.
-  // A preFetch hook dispatches a store action and returns a Promise,
-  // which is resolved when the action is complete and store state has been
-  // updated.
+  if (!asyncDataHooks.length) return
   loading(true);
-  const promise = Promise.all(
-    asyncDataHooks.map(hook =>
-      hook({ 
-        store, 
-        route, 
-        cookies: cookies.get(), 
-        userAgent 
-      })
-    )
-  ).finally(() => {
-    loading(false);
-  });
-  matchedComponents.map(c => c.asyncData&&(c.asyncData._dataPromise = promise)) 
+}
 
-  return promise 
+function asyncDataPromise(vm,route,isNeedLoading){
+  const { asyncData } = vm.$options
+  if(asyncData){
+    // 将获取数据操作分配给 promise
+    // 以便在组件中，我们可以在数据准备就绪后
+    // 通过运行 `this.dataPromise.then(...)` 来执行其他任务
+    vm.dataPromise = null
+    if(!isSSRClientFirstLoad){
+      isNeedLoading&&loading(true)
+      vm.dataPromise = asyncData({
+        store: vm.$store,
+        route: route,
+        cookies: cookies.get(), 
+        userAgent
+      })
+    }
+    else{
+      vm.dataPromise = Promise.resolve()
+    }
+    vm.dataPromise.finally(()=>{
+      loading(false)
+    })
+  }
 }
