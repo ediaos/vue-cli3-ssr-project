@@ -18,11 +18,6 @@ export default {
   asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
     return store.dispatch('FETCH_TOPIC_DETAIL',{ id: params.id })
   },
-  created(){
-     this.dataPromiseDone&&this.dataPromiseDone((isSucess)=>{
-      console.log('created---------dataPromise',isSucess)
-    })
-  },
   destroyed(){
     this.$store.commit('SET_TOPIC_DETAIL', { detail: null })
   }

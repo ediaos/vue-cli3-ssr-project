@@ -23,26 +23,16 @@ export function createApp() {
 
 Vue.mixin({
   beforeCreate () {
-    if(this.$options.asyncData){
-      console.log('this.$options._dataPromise',this.$options)
+    const { asyncData } = this.$options
+    if(asyncData){
+      // 注册通过asyncData数据请求返回后完成回调
+      // 当有asyncData的时候，
+      //     服务端渲染，因为是在router进来之前加载数据，所以在调用直接cb
+      //     前端渲染，目前空是空在router进去之后再渲染，所以需要等待数据回调后再 cb
+      // 这里采用cb的原因是 promise 在ssr create情况下无法做到处理完数据再渲染.
       this.dataPromiseDone = (cb)=>{
-        if(this.$options.asyncData._dataPromise){
-          this.$options.asyncData._dataPromise
-            .then(res=>cb(true,res))
-            .catch(err=>cb(false,err))
-            .finally(()=>{
-              console.log('dataPromiseDone----done--cb')
-              this.$options.asyncData._dataPromise = null
-            })
-        }
-        else{
-          console.log('dataPromiseDone----cb')
-          cb(true)
-        }
+        asyncData._dataPromise ? asyncData._dataPromise.finally(()=>cb()) : cb()
       }
-      // this.dataPromise = new Promise((resolve,reject)=>{
-      //   return this._dataPromise ? this._dataPromise.finally(()=>this._dataPromise = null) : resolve()
-      // })
     }
   }
 })

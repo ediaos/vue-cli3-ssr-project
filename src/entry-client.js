@@ -4,7 +4,6 @@ import { createApp } from "./main";
 const { app, router, store } = createApp();
 const userAgent = navigator.userAgent;
 const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
-let isSpaClientFirstLoad = !isSSRClient;
 
 const loading = isLoading => {
   if (isLoading) {
@@ -24,7 +23,7 @@ const loading = isLoading => {
 };
 
 // a global mixin that calls `asyncData` when a route component's params change
-let mixin = {
+Vue.mixin({
   beforeRouteUpdate(to, from, next) {
     console.log('--------beforeRouteUpdate')
     // asyncDatePromiseHook(this,to,next)
@@ -43,26 +42,8 @@ let mixin = {
     } else {
       next();
     }
-  },
-};
-
-// for unSSR client. Add forst router hook for handling asyncData before router enter.
-// 非SSR编译，首次需要触发beforeRouteEnter来进行加载数据，之后走beforeResolve逻辑
-// if (!isSSRClient) {
-//   console.log('------mixin ---beforeRouteEnter')
-//   mixin.
-//   beforeRouteEnter = (to, from, next) => {
-//     console.log('------beforeRouteEnter')
-//     if (isSpaClientFirstLoad) {
-//       isSpaClientFirstLoad = false;
-//       beforeRouteAsyncDatePromiseHandle(to, from, next);
-//     } else {
-//       next();
-//     }
-//   };
-// }
-
-Vue.mixin(mixin);
+  }
+});
 
 // prime the store with server-initialized state.
 // the state is determined during SSR and inlined in the page markup.
@@ -71,20 +52,16 @@ if (window.__INITIAL_STATE__) {
 }
 
 router.onReady(() => {
-  console.log('----------onReady')
   if (!isSSRClient) {
-    asyncDatePromiseHook()
+    onReadyHook()
   }
   
   // Add router hook for handling asyncData before router enter.
   router.beforeResolve((to, from, next) => {
-    console.log('-------router.beforeResolve')
     beforeRouteAsyncDatePromiseHandle(to, from, next);
   });
   app.$mount("#app");
 });
-
-app.$mount("#app");
 
 function beforeRouteAsyncDatePromiseHandle(to, from, next) {
   const matched = router.getMatchedComponents(to);
@@ -93,48 +70,48 @@ function beforeRouteAsyncDatePromiseHandle(to, from, next) {
   const activated = matched.filter((c, i) => {
     return diffed || (diffed = prevMatched[i] !== c);
   });
-  const asyncDataHooks = activated.map(c => c.asyncData).filter(_ => _);
-  if (!asyncDataHooks.length) {
-    return next();
-  }
-  loading(true);
-  const promise = Promise.all(
-    asyncDataHooks.map(hook =>
-      hook({ store, route: to, cookies: cookies.get(), userAgent })
-    )
-  ).finally(() => {
-    loading(false);
-    // next();
-  });
-  activated.map(c => c.asyncData&&(c.asyncData._dataPromise = promise))
-  console.log('----activated',activated)
+  // const asyncDataHooks = activated.map(c => c.asyncData).filter(_ => _);
+  // if (!asyncDataHooks.length) {
+  //   return next();
+  // }
+  asyncDatePromiseHook(activated,to)
+  // loading(true);
+  // const promise = Promise.all(
+  //   asyncDataHooks.map(hook =>
+  //     hook({ store, route: to, cookies: cookies.get(), userAgent })
+  //   )
+  // ).finally(() => {
+  //   loading(false);
+  // });
+  // activated.map(c => c.asyncData&&(c.asyncData._dataPromise = promise))
   next()
 }
 
-function asyncDatePromiseHook(){
+function onReadyHook(){
   const matchedComponents = router.getMatchedComponents();
   // no matched routes
   if (!matchedComponents.length) {
     return 
   }
-  loading(true);
+  asyncDatePromiseHook(matchedComponents,router.currentRoute)
+}
+
+function asyncDatePromiseHook(matchedComponents,route){
+  const asyncDataHooks = matchedComponents.map(c => c.asyncData).filter(_ => _);
+  if (!asyncDataHooks.length) return
+
   // Call fetchData hooks on components matched by the route.
   // A preFetch hook dispatches a store action and returns a Promise,
   // which is resolved when the action is complete and store state has been
   // updated.
+  loading(true);
   const promise = Promise.all(
-    matchedComponents.map(
-      ({ asyncData }) =>
-        asyncData &&
-        asyncData({
-          store,
-          route: router.currentRoute,
-          cookies:cookies.get(),
-          userAgent
-        })
+    asyncDataHooks.map(hook =>
+      hook({ store, route, cookies: cookies.get(), userAgent })
     )
-  ).finally(()=>{
+  ).finally(() => {
     loading(false);
-  })
+  });
+
   matchedComponents.map(c => c.asyncData&&(c.asyncData._dataPromise = promise))    
 }

@@ -30,7 +30,7 @@ export default context => {
       // A preFetch hook dispatches a store action and returns a Promise,
       // which is resolved when the action is complete and store state has been
       // updated.
-      const promise = Promise.all(
+      Promise.all(
         matchedComponents.map(
           ({ asyncData }) =>
             asyncData &&
@@ -56,7 +56,6 @@ export default context => {
           resolve(app);
         })
         .catch(reject);
-      matchedComponents.map(c => c.asyncData&&(c.asyncData._dataPromise = promise))
     }, reject);
   });
 };

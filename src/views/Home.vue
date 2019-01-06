@@ -27,19 +27,18 @@ export default {
     return store.dispatch('FETCH_TOPICS_LIST')
   },
   created(){
-    if(this.topicsList){
-      this.topicsList[0].title = '111111111'
-    }
-    this.dataPromiseDone&&this.dataPromiseDone((isSucess)=>{
-      console.log('created---------dataPromise',isSucess)
-      this.topicsList[0].title = '22222222'
+    // 注册数据回调处理
+    this.dataPromiseDone(()=>{
+      this.topicsList.forEach(item => {
+        //部分数据特殊处理，一般建议这种数据放到action中直接处理好，避免ssr渲染的时候多次计算
+        item.create_at = new Date(item.create_at).toDateString()
+      });
     })
   },
   mounted(){
     this.isMounted = true
-    this.dataPromiseDone((isSucess)=>{
-      console.log('mounted---------dataPromise',isSucess)
-    })
+    // this.dataPromiseDone(()=>{
+    // })
   },
   methods:{
     navDetail(detail){
