@@ -22,7 +22,7 @@ export default {
     return store.dispatch('FETCH_TOPIC_DETAIL',{ id: params.id })
   },
   created(){
-    this.dataPromiseCallBack()
+    !this.topicDetail&&this.dataPromiseCallBack()
   },
   beforeRouteUpdate (to, from, next) {
     // 一般建议路由变更采用计算属性或者store直接绑定

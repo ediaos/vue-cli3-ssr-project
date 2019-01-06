@@ -10,17 +10,6 @@ import Vant from "vant";
 import "vant/lib/index.css";
 Vue.use(Vant);
 
-export function createApp() {
-  const router = createRouter();
-  const store = createStore();
-  const app = new Vue({
-    router,
-    store,
-    render: h => h(App)
-  });
-  return { app, router, store };
-}
-
 Vue.mixin({
   beforeCreate () {
     const { asyncData } = this.$options
@@ -36,3 +25,15 @@ Vue.mixin({
     }
   }
 })
+
+export function createApp() {
+  const router = createRouter();
+  const store = createStore();
+  const app = new Vue({
+    router,
+    store,
+    render: h => h(App)
+  });
+  return { app, router, store };
+}
+
