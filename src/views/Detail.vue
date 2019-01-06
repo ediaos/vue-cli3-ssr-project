@@ -49,7 +49,6 @@ export default {
     },
     prev(){
       const itemIndex = this._getCurrentIndexInList()
-      console.log('prev',itemIndex)
       if(itemIndex>-1 && itemIndex > 0){
         const id = this.topicsList[itemIndex-1].id
         this.$router.push({ path: `/detail/${id}`})
