@@ -25,20 +25,12 @@ const loading = isLoading => {
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
   beforeRouteUpdate(to, from, next) {
-    console.log('--------beforeRouteUpdate')
-    // asyncDatePromiseHook(this,to,next)
     const { asyncData } = this.$options;
     if (asyncData) {
-      loading(true);
-      asyncData({
-        store,
-        route: to,
-        cookies: cookies.get(),
-        userAgent
-      }).finally(() => {
-        loading(false);
-        next();
-      });
+      asyncDatePromiseHook([this.$options],to)
+        .then(()=>{
+          next();
+        })
     } else {
       next();
     }
@@ -53,41 +45,28 @@ if (window.__INITIAL_STATE__) {
 
 router.onReady(() => {
   if (!isSSRClient) {
-    onReadyHook()
+    onReadyAsyncDataPromiseHook()
   }
   
   // Add router hook for handling asyncData before router enter.
   router.beforeResolve((to, from, next) => {
-    beforeRouteAsyncDatePromiseHandle(to, from, next);
+    beforeResolveAsyncDateHandle(to, from, next);
+    next();
   });
   app.$mount("#app");
 });
 
-function beforeRouteAsyncDatePromiseHandle(to, from, next) {
+function beforeResolveAsyncDateHandle(to, from) {
   const matched = router.getMatchedComponents(to);
   const prevMatched = router.getMatchedComponents(from);
   let diffed = false;
   const activated = matched.filter((c, i) => {
     return diffed || (diffed = prevMatched[i] !== c);
   });
-  // const asyncDataHooks = activated.map(c => c.asyncData).filter(_ => _);
-  // if (!asyncDataHooks.length) {
-  //   return next();
-  // }
   asyncDatePromiseHook(activated,to)
-  // loading(true);
-  // const promise = Promise.all(
-  //   asyncDataHooks.map(hook =>
-  //     hook({ store, route: to, cookies: cookies.get(), userAgent })
-  //   )
-  // ).finally(() => {
-  //   loading(false);
-  // });
-  // activated.map(c => c.asyncData&&(c.asyncData._dataPromise = promise))
-  next()
 }
 
-function onReadyHook(){
+function onReadyAsyncDataPromiseHook(){
   const matchedComponents = router.getMatchedComponents();
   // no matched routes
   if (!matchedComponents.length) {
@@ -98,7 +77,7 @@ function onReadyHook(){
 
 function asyncDatePromiseHook(matchedComponents,route){
   const asyncDataHooks = matchedComponents.map(c => c.asyncData).filter(_ => _);
-  if (!asyncDataHooks.length) return
+  if (!asyncDataHooks.length) return Promise.resolve()
 
   // Call fetchData hooks on components matched by the route.
   // A preFetch hook dispatches a store action and returns a Promise,
@@ -107,11 +86,17 @@ function asyncDatePromiseHook(matchedComponents,route){
   loading(true);
   const promise = Promise.all(
     asyncDataHooks.map(hook =>
-      hook({ store, route, cookies: cookies.get(), userAgent })
+      hook({ 
+        store, 
+        route, 
+        cookies: cookies.get(), 
+        userAgent 
+      })
     )
   ).finally(() => {
     loading(false);
   });
+  matchedComponents.map(c => c.asyncData&&(c.asyncData._dataPromise = promise)) 
 
-  matchedComponents.map(c => c.asyncData&&(c.asyncData._dataPromise = promise))    
+  return promise 
 }
