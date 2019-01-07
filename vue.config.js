@@ -3,6 +3,8 @@ const VueSSRClientPlugin = require("vue-server-renderer/client-plugin");
 const nodeExternals = require("webpack-node-externals");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const SpritesmithPlugin = require('webpack-spritesmith')
+const glob = require('glob')
 const path = require("path");
 const resolve = file => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
@@ -17,6 +19,7 @@ module.exports = {
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" }
   },
+  transpileDependencies:[resolve('node_modules/@tujia/fe_js_com/src')],
   // eslint-disable-next-line
   configureWebpack: config => ({
     entry: `./src/entry-${target}.js`,
@@ -53,7 +56,7 @@ module.exports = {
           ignore: ["index.html", ".DS_Store"]
         }
       ])
-    ]
+    ].concat(getCssSpritesPlugins())
   }),
   chainWebpack: config => {
     // alias
@@ -107,3 +110,32 @@ module.exports = {
     }
   }
 };
+
+// 解决雪碧图问题
+function getCssSpritesPlugins(){
+  const path = 'src/assets/images/sprites'
+  let plugins = []
+  glob.sync(path+'/*').forEach((dirPath) => {
+    let name = dirPath.replace( path+'/', '')
+    if (name == 'build') return
+    plugins.push(
+      new SpritesmithPlugin({
+        src: {
+            cwd: resolve(dirPath),
+            glob: '*.png'
+        },
+        target: {
+            image: resolve(`src/assets/images/sprites/build/${name}.png`),
+            css: resolve(`src/assets/css/sprites/build/${name}.scss`)
+        },
+        apiOptions: {
+            cssImageRef: `~${name}.png`
+        },
+        spritesmithOptions: {
+          padding: 4
+        }
+      })
+    )
+  })
+  return plugins
+}

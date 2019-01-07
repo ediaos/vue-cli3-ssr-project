@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 /dist
+/src/assets/css/sprites/
+/src/assets/images/sprites/build/
 
 # local env files
 .env.local
