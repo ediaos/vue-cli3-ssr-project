@@ -3,7 +3,7 @@ const VueSSRClientPlugin = require("vue-server-renderer/client-plugin");
 const nodeExternals = require("webpack-node-externals");
 const merge = require("lodash.merge");
 const webpack = require("webpack");
-var CopyWebpackPlugin = require("copy-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 const resolve = file => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
