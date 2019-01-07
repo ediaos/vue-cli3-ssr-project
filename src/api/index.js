@@ -12,7 +12,7 @@ export function  fetchTopicDetail({ id, cookies }){
 function getCommonHeader({ cookies }){
   if(TARGET_NODE && cookies){
     return {
-      cookie: getCookieString()
+      cookie: getCookieString(cookies)
     }
   }
   else{
