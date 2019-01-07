@@ -56,6 +56,17 @@ module.exports = {
     ]
   }),
   chainWebpack: config => {
+    // alias
+    config.resolve.alias
+      .set('@',resolve('src'))
+      .set('@lib',resolve('@tujia/fe_js_com/src'))
+      .set('@assets',resolve('src/assets'))
+      .set('@img',resolve('src/assets/images'))
+      .set('@sprites',resolve('src/assets/css/sprites'))
+    config.resolve.modules
+      .add(resolve('src/assets/images/sprites/build'))
+      .add(resolve('src/assets/css/sprites'))
+
     // reset public/index.html to static/index.html
     config.plugin("html").tap(args => {
       args[0].template = resolve("./static/index.html");
