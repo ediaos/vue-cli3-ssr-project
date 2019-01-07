@@ -10,7 +10,7 @@
     "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",
     "build": "npm run build:client && npm run build:ssr",
     "build_fvt": "npm run build:client --mode fvt && npm run build:ssr --mode fvt",
-    "lint": "vue-cli-service lint",
+    "--lint": "vue-cli-service lint",
     "dist": "cross-env NODE_ENV=production node ./server"
   },
   "dependencies": {
