@@ -1,14 +1,15 @@
 const VueSSRServerPlugin = require("vue-server-renderer/server-plugin");
 const VueSSRClientPlugin = require("vue-server-renderer/client-plugin");
 const nodeExternals = require("webpack-node-externals");
-const merge = require("lodash.merge");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 const resolve = file => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
-const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'development_node'
+const isDev =
+  process.env.NODE_ENV === "development" ||
+  process.env.NODE_ENV === "development_node";
 const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
 module.exports = {
   baseUrl: isDev && isSSRClient ? "http://localhost:8081" : "/",
@@ -16,6 +17,7 @@ module.exports = {
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" }
   },
+  // eslint-disable-next-line
   configureWebpack: config => ({
     entry: `./src/entry-${target}.js`,
     target: TARGET_NODE ? "node" : "web",
@@ -60,28 +62,31 @@ module.exports = {
       return args;
     });
 
-    if(TARGET_NODE){
+    if (TARGET_NODE) {
       // 优化ssr loader
-      config.module.rule('vue').use('vue-loader').tap(args => {
-        args.optimizeSSR = true
-        return args
-      })
+      config.module
+        .rule("vue")
+        .use("vue-loader")
+        .tap(args => {
+          args.optimizeSSR = true;
+          return args;
+        });
 
       // fix ssr bug: document not found -- https://github.com/Akryum/vue-cli-plugin-ssr/blob/master/lib/webpack.js
-      const isExtracting = config.plugins.has('extract-css')
+      const isExtracting = config.plugins.has("extract-css");
       if (isExtracting) {
         // Remove extract
-        const langs = ['css', 'postcss', 'scss', 'sass', 'less', 'stylus']
-        const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
+        const langs = ["css", "postcss", "scss", "sass", "less", "stylus"];
+        const types = ["vue-modules", "vue", "normal-modules", "normal"];
         for (const lang of langs) {
           for (const type of types) {
-            const rule = config.module.rule(lang).oneOf(type)
-            rule.uses.delete('extract-css-loader')
+            const rule = config.module.rule(lang).oneOf(type);
+            rule.uses.delete("extract-css-loader");
             // Critical CSS
             // rule.use('css-context').loader(CssContextLoader).before('css-loader')
           }
         }
-        config.plugins.delete('extract-css')
+        config.plugins.delete("extract-css");
       }
     }
 

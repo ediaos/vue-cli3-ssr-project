@@ -41,7 +41,7 @@ export default context => {
             })
         )
       )
-        .then((res) => {
+        .then(() => {
           console.log(
             `[DATE] data pre-fetch: ${Date.now() - beginTime}ms url=${fullPath}`
           );

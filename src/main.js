@@ -2,8 +2,8 @@ import Vue from "vue";
 import App from "./App.vue";
 import { createRouter } from "./router";
 import { createStore } from "./store";
-import tdkMixin from './utils/tdk'
-Vue.mixin(tdkMixin)
+import tdkMixin from "./utils/tdk";
+Vue.mixin(tdkMixin);
 //关闭生产模式下给出的提示
 Vue.config.productionTip = true;
 
@@ -22,4 +22,3 @@ export function createApp() {
   });
   return { app, router, store };
 }
-

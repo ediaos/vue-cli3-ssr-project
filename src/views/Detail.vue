@@ -13,73 +13,74 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
 export default {
   name: "Detail",
-  data(){
+  data() {
     return {
       pageIndex: -1
-    }
+    };
   },
-  computed:{
-    ...mapState(['topicDetail','topicsList'])
+  computed: {
+    ...mapState(["topicDetail", "topicsList"])
   },
-  tdk(){
+  tdk() {
     return {
-      title: this.topicDetail&&this.topicDetail.title
-    }
+      title: this.topicDetail && this.topicDetail.title
+    };
   },
+  // eslint-disable-next-line
   asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
-    return store.dispatch('FETCH_TOPIC_DETAIL',{ id: params.id })
+    return store.dispatch("FETCH_TOPIC_DETAIL", { id: params.id });
   },
-  mounted(){
-    this.dataPromiseCallBack()
+  mounted() {
+    this.dataPromiseCallBack();
   },
-  beforeRouteUpdate (to, from, next) {
+  beforeRouteUpdate(to, from, next) {
     // 一般建议路由变更采用计算属性或者store直接绑定
     // 特殊情况处理可以采用如下方案 重新注册数据返回处理
-    this.dataPromiseCallBack()
-    next()
+    this.dataPromiseCallBack();
+    next();
   },
-  destroyed(){
-    this.$store.commit('SET_TOPIC_DETAIL', { detail: null })
+  destroyed() {
+    this.$store.commit("SET_TOPIC_DETAIL", { detail: null });
   },
-  methods:{
-    next(){
-      const itemIndex = this._getCurrentIndexInList()
-      if(itemIndex>-1 && itemIndex < this.topicsList.length-1){
-        const id = this.topicsList[itemIndex+1].id
-        this.$router.push({ path: `/detail/${id}`})
+  methods: {
+    next() {
+      const itemIndex = this._getCurrentIndexInList();
+      if (itemIndex > -1 && itemIndex < this.topicsList.length - 1) {
+        const id = this.topicsList[itemIndex + 1].id;
+        this.$router.push({ path: `/detail/${id}` });
       }
     },
-    prev(){
-      const itemIndex = this._getCurrentIndexInList()
-      if(itemIndex>-1 && itemIndex > 0){
-        const id = this.topicsList[itemIndex-1].id
-        this.$router.push({ path: `/detail/${id}`})
+    prev() {
+      const itemIndex = this._getCurrentIndexInList();
+      if (itemIndex > -1 && itemIndex > 0) {
+        const id = this.topicsList[itemIndex - 1].id;
+        this.$router.push({ path: `/detail/${id}` });
       }
     },
-    dataPromiseCallBack(){
+    dataPromiseCallBack() {
       // 注册数据回调处理
-      this.dataPromise.then(()=>{
-        this.pageIndex = this._getCurrentIndexInList()
-      })
+      this.dataPromise.then(() => {
+        this.pageIndex = this._getCurrentIndexInList();
+      });
     },
-    _getCurrentIndexInList(){
-      if(!this.topicsList) return undefined
-      const finds = this.topicsList.filter(i=>i.id == this.$route.params.id)
-      const itemIndex = finds.length? this.topicsList.indexOf(finds[0]) : -1
-      return itemIndex
+    _getCurrentIndexInList() {
+      if (!this.topicsList) return undefined;
+      const finds = this.topicsList.filter(i => i.id == this.$route.params.id);
+      const itemIndex = finds.length ? this.topicsList.indexOf(finds[0]) : -1;
+      return itemIndex;
     }
   }
 };
 </script>
 <style lang="scss" scoped>
-.detail-layout{
+.detail-layout {
   max-width: 600px;
   margin: 0 auto;
 }
-.footer{
+.footer {
   margin-bottom: 60px;
 }
 </style>

@@ -17,14 +17,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
- .topics-list__item{
-    padding: 10px;
-    border-bottom: 1px solid #999;
-    &:hover{
-      background: #eee;
-    }
-    h3{
-      margin: 0;
-    }
+.topics-list__item {
+  padding: 10px;
+  border-bottom: 1px solid #999;
+  &:hover {
+    background: #eee;
   }
+  h3 {
+    margin: 0;
+  }
+}
 </style>
