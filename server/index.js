@@ -67,14 +67,14 @@ const handleError = (ctx,err) => {
 }
 
 //开放dist目录
-app.use(mount('/static',static(resolve('../static'))))
+app.use(mount('/static',static(resolve('../dist/static'))))
 
 // 处理请求
 app.use(ssrRequestHandle)
 
 app.listen(8080)
   .on('listening',()=>{
-    console.log(`server started at localhost:9080`);
+    console.log(`server started at localhost:8080`);
   })
   .on('error',(err)=>{
     console.log('---server error---')

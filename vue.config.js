@@ -10,7 +10,6 @@ const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
 const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'development_node'
 const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
-
 module.exports = {
   baseUrl: isDev && isSSRClient ? "http://localhost:8081" : "/",
   assetsDir: "static",
@@ -37,7 +36,7 @@ module.exports = {
         })
       : undefined,
     optimization: {
-      splitChunks: undefined
+      splitChunks: TARGET_NODE ? false : undefined
     },
     plugins: [
       TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin(),
@@ -63,6 +62,31 @@ module.exports = {
       args[0].template = resolve("./static/index.html");
       return args;
     });
+
+    if(TARGET_NODE){
+      // 优化ssr loader
+      config.module.rule('vue').use('vue-loader').tap(args => {
+        args.optimizeSSR = true
+        return args
+      })
+
+      // fix ssr bug: document not found -- https://github.com/Akryum/vue-cli-plugin-ssr/blob/master/lib/webpack.js
+      const isExtracting = config.plugins.has('extract-css')
+      if (isExtracting) {
+        // Remove extract
+        const langs = ['css', 'postcss', 'scss', 'sass', 'less', 'stylus']
+        const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
+        for (const lang of langs) {
+          for (const type of types) {
+            const rule = config.module.rule(lang).oneOf(type)
+            rule.uses.delete('extract-css-loader')
+            // Critical CSS
+            // rule.use('css-context').loader(CssContextLoader).before('css-loader')
+          }
+        }
+        config.plugins.delete('extract-css')
+      }
+    }
 
     // fix ssr hot update bug
     if (isDev && TARGET_NODE) {
