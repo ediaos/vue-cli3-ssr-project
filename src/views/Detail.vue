@@ -24,6 +24,11 @@ export default {
   computed:{
     ...mapState(['topicDetail','topicsList'])
   },
+  tdk(){
+    return {
+      title: this.topicDetail&&this.topicDetail.title
+    }
+  },
   asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
     return store.dispatch('FETCH_TOPIC_DETAIL',{ id: params.id })
   },

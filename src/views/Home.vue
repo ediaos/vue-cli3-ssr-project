@@ -23,6 +23,14 @@ export default {
   computed:{
     ...mapState(['topicsList'])
   },
+  tdk(){
+    return {
+      title: '话题列表: ' + (this.topicsList&&this.topicsList[0].title),
+      description: `话题Desc: ${this.topicsList&&this.topicsList[0].title} 时间: ${this.topicsList&&this.topicsList[0].create_at}`,
+      keywords: `话题keywords`,
+      ssrHeadAddInfo: `<link rel="canonical" href="https://www.github.com">`
+    }
+  },
   asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
     return store.dispatch('FETCH_TOPICS_LIST',{ cookies })
   },

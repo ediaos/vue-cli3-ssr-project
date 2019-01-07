@@ -1,7 +1,6 @@
 import cookies from "js-cookie";
 import Vue from "vue";
 import { createApp } from "./main";
-const { app, router, store } = createApp();
 const userAgent = navigator.userAgent;
 const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
 let isSSRClientFirstLoad = isSSRClient
@@ -31,6 +30,9 @@ Vue.mixin({
     next()
   }
 });
+
+// 获取app信息，（处理tkd mixin优先级，放到global minxin后面）
+const { app, router, store } = createApp();
 
 // prime the store with server-initialized state.
 // the state is determined during SSR and inlined in the page markup.
