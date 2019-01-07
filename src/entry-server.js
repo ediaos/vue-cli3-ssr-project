@@ -1,5 +1,4 @@
 import { createApp } from "./main";
-// const isProd = process.env.NODE_ENV !== 'production';
 
 // This exported function will be called by `bundleRenderer`.
 // This is where we perform data-prefetching to determine the

@@ -8,11 +8,11 @@ const path = require("path");
 const resolve = file => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
-const isProd = process.env.NODE_ENV === "production";
+const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'development_node'
 const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
 
 module.exports = {
-  baseUrl: !isProd && isSSRClient ? "http://localhost:8081" : "/",
+  baseUrl: isDev && isSSRClient ? "http://localhost:8081" : "/",
   assetsDir: "static",
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" }
@@ -65,7 +65,7 @@ module.exports = {
     });
 
     // fix ssr hot update bug
-    if (!isProd && TARGET_NODE) {
+    if (isDev && TARGET_NODE) {
       config.plugins.delete("hmr");
     }
   }

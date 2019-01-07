@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev:client": "vue-cli-service serve",
-    "dev:ssr": "cross-env BUILD_TARGET=node node ./server",
+    "dev:ssr": "cross-env BUILD_TARGET=node NODE_ENV=development_node node ./server",
     "dev": "cross-env BUILD_CLIENT_TARGET=SSR concurrently \"vue-cli-service serve --port 8081\" \"npm run dev:ssr\" ",
     "build:client": "vue-cli-service build",
     "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",

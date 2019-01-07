@@ -3,7 +3,8 @@ import Vue from "vue";
 import { createApp } from "./main";
 const { app, router, store } = createApp();
 const userAgent = navigator.userAgent;
-const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
+
+const isSSRClient = document.body.getAttribute('data-server-rendered-page') === "true";
 let isSSRClientFirstLoad = isSSRClient
 
 const loading = isLoading => {

@@ -10,10 +10,10 @@ const resolve = (file) => path.resolve(__dirname, file)
 const app = new Koa()
 app.use(cookie())
 
-const isProd = process.env.NODE_ENV === 'production'
+const isDev = process.env.NODE_ENV === 'development_node'
 const template = fs.readFileSync(resolve("./index.template.html"), "utf-8")
 const { createBundleRenderer } = require('vue-server-renderer')
-const setupServer = require(`${isProd?'./setup-prod-server':'./setup-dev-server'}`)
+const setupServer = require(`${isDev ? './setup-dev-server' : './setup-prod-server'}`)
 
 // 获取render
 let renderer
