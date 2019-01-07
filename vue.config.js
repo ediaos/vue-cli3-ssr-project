@@ -41,9 +41,6 @@ module.exports = {
     plugins: [
       TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin(),
       new webpack.DefinePlugin({
-        "process.env.BUILD_CLIENT_TARGET": `"${
-          process.env.BUILD_CLIENT_TARGET
-        }"`,
         "process.env.BUILD_TARGET": `"${process.env.BUILD_TARGET}"`
       }),
       new CopyWebpackPlugin([
