@@ -13,9 +13,9 @@
 
 <script>
 export default {
-  name: 'unitList',
-  data: () => ({}),
-}
+  name: "unitList",
+  data: () => ({})
+};
 </script>
 
 <style lang="scss" scoped>

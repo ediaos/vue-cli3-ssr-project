@@ -12,27 +12,29 @@
 </template>
 
 <script>
-import { mapState,mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex";
 export default {
   name: "unitDetail",
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     ...mapState(["unitDetailApiData"]),
-    ...mapGetters(['unitDetail'])
-    
+    ...mapGetters(["unitDetail"])
   },
   tdk() {
-    const title = `房屋详情-${this.unitDetail && this.unitDetail.unit.unitName}`
+    const title = `房屋详情-${this.unitDetail &&
+      this.unitDetail.unit.unitName}`;
     return {
       title
     };
   },
   // eslint-disable-next-line
   asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
-    return store.dispatch("FETCH_UNIT_DETAIL", { unitId: params.unitid, cookies });
+    return store.dispatch("FETCH_UNIT_DETAIL", {
+      unitId: params.unitid,
+      cookies
+    });
   },
   mounted() {
     this.dataPromiseCallBack();
@@ -50,10 +52,10 @@ export default {
     dataPromiseCallBack() {
       // 注册数据回调处理
       this.dataPromise.then(() => {
-        if(!this.unitDetailApiData.isSuccess){
-          alert(this.unitDetailApiData.err.errorMsg)
+        if (!this.unitDetailApiData.isSuccess) {
+          alert(this.unitDetailApiData.err.errorMsg);
         }
-        console.log('this.dataPromise.then')
+        console.log("this.dataPromise.then");
       });
     }
   }

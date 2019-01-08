@@ -16,11 +16,13 @@ function updateTdk(vm, vdom) {
     // for append more meta or link seo need
     vdom.ssrHeadAddInfo = tdk.ssrHeadAddInfo;
   }
-  if(vdom){
-    vdom.title = vdom.title || '途家网'
-    vdom.description = vdom.description || '手机途家网'
-    vdom.keywords = vdom.keywords || '酒店式公寓，家庭旅馆，日租房，短租房，度假公寓，手机途家网'
-    vdom.ssrHeadAddInfo = vdom.ssrHeadAddInfo || ''
+  if (vdom) {
+    vdom.title = vdom.title || "途家网";
+    vdom.description = vdom.description || "手机途家网";
+    vdom.keywords =
+      vdom.keywords ||
+      "酒店式公寓，家庭旅馆，日租房，短租房，度假公寓，手机途家网";
+    vdom.ssrHeadAddInfo = vdom.ssrHeadAddInfo || "";
   }
 }
 
