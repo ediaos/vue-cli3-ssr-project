@@ -6,17 +6,15 @@
  * slot : 
  */
 <template>
-  <article v-if="unitDetail" class='g-unit-detail'>
-    {{unitDetail.unit.unitName}}
+  <article v-if="detail" class='g-unit-detail'>
+    {{detail.unit.unitName}}
   </article>
 </template>
 
 <script>
 import { mapState, mapGetters } from "vuex";
 import storeModule from '@/store/modules/unitDetail'
-const TARGET_NODE = process.env.BUILD_TARGET === 'node' 
 const PAGE_NAME = "unitDetail"
-let isRegisterModule = false
 
 export default {
   name: PAGE_NAME,
@@ -27,13 +25,13 @@ export default {
     apiData () {
       return this.$store.state[PAGE_NAME] && this.$store.state[PAGE_NAME].apiData
     },
-    unitDetail(){
+    detail(){
       return this.apiData&&this.apiData.isSuccess&&this.apiData.data
     }
   },
   tdk() {
     return {
-      title: `房屋详情-${this.unitDetail && this.unitDetail.unit.unitName}`
+      title: `房屋详情-${this.detail && this.detail.unit.unitName}`
     };
   },
   // eslint-disable-next-line
