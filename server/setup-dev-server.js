@@ -7,6 +7,7 @@ const chalk = require('chalk')
 const proxy = require('koa-proxies')
 const config = require('../config')
 const isServerRenderPage = require('./ssr-page-config')
+const staticHost = "http://127.0.0.1:8081"
 
 let renderer = null
 // 2、编译webpack配置文件
@@ -42,7 +43,7 @@ serverCompiler.watch({},(err,stats)=>{
 })
 
 const updateClientManifest = async()=>{
-  const result = await axios.get('http://localhost:8081/vue-ssr-client-manifest.json')
+  const result = await axios.get(`${staticHost}/vue-ssr-client-manifest.json`)
   if(result.data){
     clientManifest = result.data
   }
@@ -69,7 +70,6 @@ function serverLog(){
 }
 
 module.exports = async function setupServer (app, createRenderer){
-
   devMiddleWare(app)
   renderer = createRenderer 
   serverLog()
@@ -81,7 +81,7 @@ function devMiddleWare(app){
   Object.keys(proxyTable).forEach(function(key) {
     app.use(proxy(key, proxyTable[key]))
   })
-
+  // 静态资源代理
   app.use(async (ctx,next)=>{
     //服务端渲染命中的继续走 server.index 
     //非命中的统一走前端渲染
@@ -90,7 +90,7 @@ function devMiddleWare(app){
     }
     else{
       await proxy(ctx.url,{
-        target: 'http://localhost:8081',    
+        target: staticHost,    
         changeOrigin: true
       })(ctx,next)
     }
