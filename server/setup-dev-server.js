@@ -89,7 +89,7 @@ function devMiddleWare(app){
       await next()
     }
     else{
-      await proxy(ctx.url,{
+      await proxy(ctx.path,{
         target: staticHost,    
         changeOrigin: true
       })(ctx,next)

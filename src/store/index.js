@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import actions from "./actions";
 import mutations from "./mutations";
 import getters from "./getters";
+import unitDetailModule from './modules/unitDetail'
 const TARGET_NODE = process.env.BUILD_TARGET === 'node' 
 Vue.use(Vuex);
 
@@ -13,7 +14,10 @@ export function createStore() {
     },
     mutations,
     actions,
-    getters
+    getters,
+    modules:{
+      unitDetail: unitDetailModule
+    }
   });
 }
 

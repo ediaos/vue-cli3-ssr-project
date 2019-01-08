@@ -37,7 +37,7 @@ module.exports = function isServerRenderPage(ctx,cookies){
     let isSSR = false
     pageConfigs.forEach(item=>{
       if(!isSSR){
-        isSSR = item.regExp.test(ctx.url)
+        isSSR = item.regExp.test(ctx.path)
       }
     })
     return isSSR
