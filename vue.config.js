@@ -10,9 +10,7 @@ const path = require("path");
 const resolve = file => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
-const isDev =
-  process.env.NODE_ENV === "development" ||
-  process.env.NODE_ENV === "development_node";
+const isDev = process.env.NODE_ENV === "dev"
 
 module.exports = {
   assetsDir: "static",

@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev:client": "vue-cli-service serve",
-    "dev:ssr": "cross-env BUILD_TARGET=node NODE_ENV=development_node node ./server",
-    "dev": "cross-env BUILD_CLIENT_TARGET=SSR concurrently \"vue-cli-service serve --port 8081\" \"npm run dev:ssr\" ",
+    "dev:client": "cross-env vue-cli-service serve --mode dev",
+    "dev:ssr": "cross-env BUILD_TARGET=node NODE_ENV=dev node ./server",
+    "dev": "cross-env BUILD_CLIENT_TARGET=SSR concurrently \"vue-cli-service serve --mode dev --port 8081\" \"npm run dev:ssr\" ",
     "build:client": "vue-cli-service build",
     "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",
     "build": "npm run build:client && npm run build:ssr",

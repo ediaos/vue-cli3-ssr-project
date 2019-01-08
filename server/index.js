@@ -11,7 +11,7 @@ const isServerRenderPage = require('./ssr-page-config')
 const app = new Koa()
 app.use(cookie())
 
-const isDev = process.env.NODE_ENV === 'development_node'
+const isDev = process.env.NODE_ENV === 'dev'
 const template = fs.readFileSync(resolve("./index.template.html"), "utf-8")
 const spaTemplate = fs.readFileSync(resolve(`${ isDev ? '../static/index.html': '../index.html' }`), "utf-8")
 const { createBundleRenderer } = require('vue-server-renderer')
