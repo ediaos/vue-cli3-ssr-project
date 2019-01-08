@@ -7,7 +7,6 @@ const userAgent = navigator.userAgent;
 const isSSRClient =
   document.body.getAttribute("data-server-rendered-page") === "true";
 let isSSRClientFirstLoad = isSSRClient;
-
 const loading = isLoading => {
   if (isLoading) {
     Vue.prototype.$toast.loading({
@@ -29,6 +28,7 @@ Vue.mixin({
     asyncDataPromise(this, this.$route);
   },
   beforeRouteUpdate(to, from, next) {
+    isSSRClientFirstLoad = false
     asyncDataPromise(this, to, true);
     next();
   }
@@ -44,12 +44,10 @@ router.onReady(() => {
   if (!isSSRClient) {
     checkIsNeedLoading(router.getMatchedComponents(), router.currentRoute);
   }
-  else{
-    isSSRClientFirstLoad = false;
-  }
 
   // Add router hook for handling asyncData before router enter.
   router.beforeResolve((to, from, next) => {
+    isSSRClientFirstLoad = false;
     beforeResolveHandle(to, from);
     next();
   });

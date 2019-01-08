@@ -1,20 +1,20 @@
 
+const deploy = process.env.NODE_DEPLOY
+const envBase = require('./env/env')
+const envDeploy = require(`./env/env.${deploy}`)
+const env = Object.assign(envBase,envDeploy)
 const proxyMap = {
   '/bingo/pc': {
-    target: 'https://www1.fvt.tujia.com',
+    target: env.TUJIA_HOST,
     changeOrigin: true
-    // pathRewrite: {
-    //   '^/feapi/www/': '/'
-    // }
   }
 }
 
 module.exports = {
+  env, //环境变量
   build: {
-
   },
   dev: {
-    port: 8080,
     proxyTable: proxyMap,
   }
 }

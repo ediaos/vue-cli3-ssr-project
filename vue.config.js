@@ -4,7 +4,7 @@ const nodeExternals = require("webpack-node-externals");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const SpritesmithPlugin = require("webpack-spritesmith");
-const config = require('./config')
+const deployConfig = require('./config')
 const glob = require("glob");
 const path = require("path");
 const resolve = file => path.resolve(__dirname, file);
@@ -16,7 +16,7 @@ module.exports = {
   assetsDir: "static",
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },
-    proxy: config.dev.proxyTable
+    proxy: deployConfig.dev.proxyTable
   },
   transpileDependencies: [resolve("node_modules/@tujia/fe_js_com/src")],
   // eslint-disable-next-line
@@ -46,7 +46,8 @@ module.exports = {
       TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin(),
       new webpack.DefinePlugin({
         "process.env.BUILD_TARGET": `"${process.env.BUILD_TARGET}"`,
-        "process.env.NODE_DEPLOY" : `"${process.env.NODE_DEPLOY}"`
+        "process.env.NODE_DEPLOY" : `"${process.env.NODE_DEPLOY}"`,
+        "process.env.config" : getDeployConfigDefine()
       }),
       new CopyWebpackPlugin([
         {
@@ -110,6 +111,15 @@ module.exports = {
     }
   }
 };
+
+// deploy config converter
+function getDeployConfigDefine(){
+  let config = {}
+  Object.keys(deployConfig.env).forEach(function(key) {
+    config[key] = `"${deployConfig.env[key]}"`
+  })
+  return config
+}
 
 // 解决雪碧图问题
 function getCssSpritesPlugins() {

@@ -6,7 +6,9 @@
  */
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 import Fetch from "@lib/utils/fetch.js";
-// Fetch.prototype.tjHost = process.host
+//注册给接口使用的环境配置
+Fetch.prototype.envConfig = process.env.config
+
 export default new Fetch({
   reqHandle: options => {
     // 服务端渲染 增加cookie传输

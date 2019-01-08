@@ -4,7 +4,7 @@
  */
 import fetch from "./tjFetch";
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
-const baseUrl = TARGET_NODE ? "https://www1.fvt.tujia.com" : "";
+const baseUrl = TARGET_NODE ? fetch.envConfig.TUJIA_HOST : "";
 
 const apiConfig = {
   unitDetail: baseUrl + "/bingo/pc/unit/getpcunit"
