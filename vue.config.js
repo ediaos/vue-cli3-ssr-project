@@ -4,6 +4,7 @@ const nodeExternals = require("webpack-node-externals");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const SpritesmithPlugin = require("webpack-spritesmith");
+const config = require('./config')
 const glob = require("glob");
 const path = require("path");
 const resolve = file => path.resolve(__dirname, file);
@@ -18,7 +19,8 @@ module.exports = {
   baseUrl: isDev && isSSRClient ? "http://localhost:8081" : "/",
   assetsDir: "static",
   devServer: {
-    headers: { "Access-Control-Allow-Origin": "*" }
+    headers: { "Access-Control-Allow-Origin": "*" },
+    proxy: config.dev.proxy
   },
   transpileDependencies: [resolve("node_modules/@tujia/fe_js_com/src")],
   // eslint-disable-next-line
