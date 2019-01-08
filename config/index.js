@@ -2,7 +2,7 @@
 const proxyMap = {
   '/bingo/pc': {
     target: 'https://www1.fvt.tujia.com',
-    // changeOrigin: true,
+    changeOrigin: true
     // pathRewrite: {
     //   '^/feapi/www/': '/'
     // }
@@ -15,6 +15,6 @@ module.exports = {
   },
   dev: {
     port: 8080,
-    proxy: proxyMap,
+    proxyTable: proxyMap,
   }
 }

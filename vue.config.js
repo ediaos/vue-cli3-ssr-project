@@ -20,7 +20,7 @@ module.exports = {
   assetsDir: "static",
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },
-    proxy: config.dev.proxy
+    proxy: config.dev.proxyTable
   },
   transpileDependencies: [resolve("node_modules/@tujia/fe_js_com/src")],
   // eslint-disable-next-line

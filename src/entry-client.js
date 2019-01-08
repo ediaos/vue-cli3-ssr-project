@@ -44,10 +44,12 @@ router.onReady(() => {
   if (!isSSRClient) {
     checkIsNeedLoading(router.getMatchedComponents(), router.currentRoute);
   }
+  else{
+    isSSRClientFirstLoad = false;
+  }
 
   // Add router hook for handling asyncData before router enter.
   router.beforeResolve((to, from, next) => {
-    isSSRClientFirstLoad = false;
     beforeResolveHandle(to, from);
     next();
   });

@@ -4,6 +4,9 @@ const MemoryFS = require('memory-fs')
 const webpackConfig = require('@vue/cli-service/webpack.config')
 const axios = require('axios')
 const chalk = require('chalk')
+const proxy = require('koa-proxies')
+const config = require('../config')
+
 
 
 let renderer = null
@@ -67,6 +70,24 @@ function serverLog(){
 }
 
 module.exports = async function setupServer (app, createRenderer){
+  devMiddleWare(app)
   renderer = createRenderer 
   serverLog()
 }
+
+function devMiddleWare(app){
+  // 接口代理
+  const proxyTable = config.dev.proxyTable
+  Object.keys(proxyTable).forEach(function(key) {
+    app.use(proxy(key, proxyTable[key]))
+  })
+
+  // app.use(proxy('/static', {
+  //   target: 'https://api.github.com/users',    
+  //   changeOrigin: true,
+  //   agent: new httpsProxyAgent('http://1.2.3.4:88'), // if you need or just delete this line
+  //   rewrite: path => path.replace(/^\/octocat(\/|\/\w+)?$/, '/vagusx'),
+  //   logs: true
+  // }))
+}
+
