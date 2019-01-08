@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/detail/233904">房屋1</router-link>
-      <router-link to="/detail/218819">房屋2</router-link>
+      <router-link to="/">HOME</router-link> | 
+      <router-link to="/detail/233904">房屋233904</router-link> | 
+      <router-link to="/detail/218819">房屋218819</router-link>
     </div>
     <router-view/>
   </div>

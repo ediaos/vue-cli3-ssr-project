@@ -13,25 +13,34 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
+import storeModule from '@/store/modules/unitDetail'
+const TARGET_NODE = process.env.BUILD_TARGET === 'node' 
+const PAGE_NAME = "unitDetail"
+let isRegisterModule = false
+
 export default {
-  name: "unitDetail",
+  name: PAGE_NAME,
   data() {
     return {};
   },
   computed: {
-    ...mapState(["unitDetailApiData"]),
-    ...mapGetters(["unitDetail"])
+    apiData () {
+      return this.$store.state[PAGE_NAME] && this.$store.state[PAGE_NAME].apiData
+    },
+    unitDetail(){
+      return this.apiData&&this.apiData.isSuccess&&this.apiData.data
+    }
   },
   tdk() {
-    const title = `房屋详情-${this.unitDetail &&
-      this.unitDetail.unit.unitName}`;
     return {
-      title
+      title: `房屋详情-${this.unitDetail && this.unitDetail.unit.unitName}`
     };
   },
   // eslint-disable-next-line
   asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
-    return store.dispatch("FETCH_UNIT_DETAIL", {
+    // 使用服务端渲染store子模块注册比较特殊，特殊处理
+    store.registerSSRModule(PAGE_NAME,storeModule)
+    return store.dispatch(`${PAGE_NAME}/FETCH_UNIT_DETAIL`, {
       unitId: params.unitid,
       cookies
     });
@@ -46,14 +55,14 @@ export default {
     next();
   },
   destroyed() {
-    this.$store.commit("SET_UNIT_DETAIL", null);
+    this.$store.commit(`${PAGE_NAME}/SET_UNIT_DETAIL`, null);
   },
   methods: {
     dataPromiseCallBack() {
       // 注册数据回调处理
       this.dataPromise.then(() => {
-        if (!this.unitDetailApiData.isSuccess) {
-          alert(this.unitDetailApiData.err.errorMsg);
+        if (!this.apiData.isSuccess) {
+          alert(this.apiData.err.errorMsg);
         }
         console.log("this.dataPromise.then");
       });
