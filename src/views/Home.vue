@@ -2,9 +2,9 @@
   <div class="home">
     <!-- v-if="isMounted" -->
     <img alt="Vue logo" src="../assets/logo.png">
-    <div v-if="topicsList" class="topics-list">
+    <!-- <div v-if="topicsList" class="topics-list">
       <topic-item v-for="item in topicsList" :key="item.id" :topicInfo="item" @click="navDetail(item)"/>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -21,32 +21,32 @@ export default {
     };
   },
   computed: {
-    ...mapState(["topicsList"])
+    // ...mapState(["topicsList"])
   },
-  tdk() {
-    return {
-      title: "话题列表: " + (this.topicsList && this.topicsList[0].title),
-      description: `话题Desc: ${this.topicsList &&
-        this.topicsList[0].title} 时间: ${this.topicsList &&
-        this.topicsList[0].create_at}`,
-      keywords: `话题keywords`,
-      ssrHeadAddInfo: `<link rel="canonical" href="https://www.github.com">`
-    };
-  },
+  // tdk() {
+  //   return {
+  //     title: "话题列表: " + (this.topicsList && this.topicsList[0].title),
+  //     description: `话题Desc: ${this.topicsList &&
+  //       this.topicsList[0].title} 时间: ${this.topicsList &&
+  //       this.topicsList[0].create_at}`,
+  //     keywords: `话题keywords`,
+  //     ssrHeadAddInfo: `<link rel="canonical" href="https://www.github.com">`
+  //   };
+  // },
   // eslint-disable-next-line
-  asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
-    return store.dispatch("FETCH_TOPICS_LIST", { cookies });
-  },
-  mounted() {
-    this.isMounted = true;
-    // 注册数据回调处理,仅限mounted后面生命周期中使用
-    this.dataPromise.then(() => {
-      this.topicsList &&
-        this.topicsList.forEach(item => {
-          item.create_at = new Date(item.create_at).toDateString();
-        });
-    });
-  },
+  // asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
+  //   return store.dispatch("FETCH_TOPICS_LIST", { cookies });
+  // },
+  // mounted() {
+  //   this.isMounted = true;
+  //   // 注册数据回调处理,仅限mounted后面生命周期中使用
+  //   this.dataPromise.then(() => {
+  //     this.topicsList &&
+  //       this.topicsList.forEach(item => {
+  //         item.create_at = new Date(item.create_at).toDateString();
+  //       });
+  //   });
+  // },
   methods: {
     navDetail(detail) {
       this.$router.push({ path: `/detail/${detail.id}` });

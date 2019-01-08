@@ -1,4 +1,5 @@
 import cookies from "js-cookie";
+import '@/business/commonLib'
 import Vue from "vue";
 import { createApp } from "./main";
 const { app, router, store } = createApp();

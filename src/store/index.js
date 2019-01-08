@@ -10,7 +10,7 @@ export function createStore() {
   return new Vuex.Store({
     state: {
       topicsList: null,
-      topicDetail: null
+      unitDetailApiData: null
     },
     mutations,
     actions,

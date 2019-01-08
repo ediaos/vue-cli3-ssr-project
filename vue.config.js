@@ -13,6 +13,7 @@ const isDev =
   process.env.NODE_ENV === "development" ||
   process.env.NODE_ENV === "development_node";
 const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
+
 module.exports = {
   baseUrl: isDev && isSSRClient ? "http://localhost:8081" : "/",
   assetsDir: "static",
@@ -56,13 +57,13 @@ module.exports = {
           ignore: ["index.html", ".DS_Store"]
         }
       ])
-    ].concat(getCssSpritesPlugins())
+    ].concat(TARGET_NODE?[]:getCssSpritesPlugins())
   }),
   chainWebpack: config => {
     // alias
     config.resolve.alias
       .set('@',resolve('src'))
-      .set('@lib',resolve('@tujia/fe_js_com/src'))
+      .set('@lib','@tujia/fe_js_com/src')
       .set('@assets',resolve('src/assets'))
       .set('@img',resolve('src/assets/images'))
       .set('@sprites',resolve('src/assets/css/sprites'))

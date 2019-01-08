@@ -1,5 +1,6 @@
 export default {
-  // aboutInfo (state) {
-  //   return state.pageAbout
-  // }
+  unitDetail (state) {
+    const data = state.unitDetailApiData
+    return data&&data.isSuccess&&data.data
+  }
 };
