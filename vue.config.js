@@ -13,10 +13,8 @@ const target = TARGET_NODE ? "server" : "client";
 const isDev =
   process.env.NODE_ENV === "development" ||
   process.env.NODE_ENV === "development_node";
-const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
 
 module.exports = {
-  baseUrl: isDev && isSSRClient ? "http://localhost:8081" : "/",
   assetsDir: "static",
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },

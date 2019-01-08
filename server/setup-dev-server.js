@@ -6,8 +6,7 @@ const axios = require('axios')
 const chalk = require('chalk')
 const proxy = require('koa-proxies')
 const config = require('../config')
-
-
+const isServerRenderPage = require('./ssr-page-config')
 
 let renderer = null
 // 2、编译webpack配置文件
@@ -70,6 +69,7 @@ function serverLog(){
 }
 
 module.exports = async function setupServer (app, createRenderer){
+
   devMiddleWare(app)
   renderer = createRenderer 
   serverLog()
@@ -82,12 +82,18 @@ function devMiddleWare(app){
     app.use(proxy(key, proxyTable[key]))
   })
 
-  // app.use(proxy('/static', {
-  //   target: 'https://api.github.com/users',    
-  //   changeOrigin: true,
-  //   agent: new httpsProxyAgent('http://1.2.3.4:88'), // if you need or just delete this line
-  //   rewrite: path => path.replace(/^\/octocat(\/|\/\w+)?$/, '/vagusx'),
-  //   logs: true
-  // }))
+  app.use(async (ctx,next)=>{
+    //服务端渲染命中的继续走 server.index 
+    //非命中的统一走前端渲染
+    if(isServerRenderPage(ctx,ctx.cookie)){
+      await next()
+    }
+    else{
+      await proxy(ctx.url,{
+        target: 'http://localhost:8081',    
+        changeOrigin: true
+      })(ctx,next)
+    }
+  })
 }
 

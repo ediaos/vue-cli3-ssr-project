@@ -27,7 +27,12 @@ export function createRouter() {
         // which is lazy-loaded when the route is visited.
         component: () =>
           import(/* webpackChunkName: "unit-detail" */ "../views/unitDetail/index.vue")
-      }
+      },
+      {
+        path: "/test",
+        name: "test",
+        component: Home
+      },
     ]
   });
 }

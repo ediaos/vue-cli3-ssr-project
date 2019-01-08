@@ -6,12 +6,14 @@ const cookie = require('koa-cookie').default;
 const mount = require('koa-mount');
 const LRU = require('lru-cache')
 const resolve = (file) => path.resolve(__dirname, file)
+const isServerRenderPage = require('./ssr-page-config')
 // const morgan = require('koa-morgan')  for logs
 const app = new Koa()
 app.use(cookie())
 
 const isDev = process.env.NODE_ENV === 'development_node'
 const template = fs.readFileSync(resolve("./index.template.html"), "utf-8")
+const spaTemplate = fs.readFileSync(resolve(`${ isDev ? '../static/index.html': '../index.html' }`), "utf-8")
 const { createBundleRenderer } = require('vue-server-renderer')
 const setupServer = require(`${isDev ? './setup-dev-server' : './setup-prod-server'}`)
 
@@ -70,15 +72,21 @@ const handleError = (ctx,err) => {
 app.use(mount('/static',static(resolve('../dist/static'))))
 
 // 处理请求
-app.use(ssrRequestHandle)
+app.use(async(ctx,next)=>{
+  if(isServerRenderPage(ctx,ctx.cookie)){
+    await ssrRequestHandle(ctx,next)
+  }
+  else{
+    ctx.body = spaTemplate
+  }
+})
 
 app.listen(8080)
   .on('listening',()=>{
     console.log(`server started at localhost:8080`);
   })
   .on('error',(err)=>{
-    console.log('---server error---')
-    console.log(err)
+    console.log('---server error---',err)
   })
 
 
