@@ -49,15 +49,22 @@ module.exports = {
         "process.env.NODE_DEPLOY" : `"${process.env.NODE_DEPLOY}"`,
         "process.env.config" : getDeployConfigDefine()
       }),
-      new CopyWebpackPlugin([
+    ]
+      .concat( isDev?[] : new CopyWebpackPlugin([
         {
           from: resolve("./static"),
           to: resolve("./dist/static"),
           toType: "dir",
           ignore: ["index.html", ".DS_Store"]
+        },
+        {
+          from: resolve("./server"),
+          to: resolve("./dist/server"),
+          toType: "dir",
+          ignore: ["setup-dev-server.js", ".DS_Store"]
         }
-      ])
-    ].concat(TARGET_NODE ? [] : getCssSpritesPlugins())
+      ]))
+      .concat(TARGET_NODE ? [] : getCssSpritesPlugins())
   }),
   chainWebpack: config => {
     // alias
