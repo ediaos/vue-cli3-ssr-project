@@ -13,8 +13,10 @@ const proxyMap = {
 module.exports = {
   env, //环境变量
   build: {
+    assetsPublicPath: env.TUJIA_CDN_HOST
   },
   dev: {
+    assetsPublicPath: undefined,
     proxyTable: proxyMap,
   }
 }
