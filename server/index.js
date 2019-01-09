@@ -10,7 +10,6 @@ const resolve = (file) => path.resolve(__dirname, file)
 const isServerRenderPage = require('./ssr-page-config')
 const PORT = process.env.NODE_PORT ? parseInt(process.env.NODE_PORT) : 8080
 const app = new Koa()
-app.use(cookie())
 
 const isDev = process.env.NODE_ENV === 'dev'
 const template = fs.readFileSync(resolve("./index.template.html"), "utf-8")
@@ -68,6 +67,9 @@ const handleError = (ctx,err) => {
   }
   console.error(`error during render : url=${ctx.url} err=`,err)
 }
+
+// add cookie for koa
+app.use(cookie())
 
 //开放dist目录
 app.use(mount('/static',static(resolve('../static'))))
