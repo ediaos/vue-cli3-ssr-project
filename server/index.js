@@ -7,6 +7,7 @@ const mount = require('koa-mount');
 const LRU = require('lru-cache')
 const resolve = (file) => path.resolve(__dirname, file)
 const isServerRenderPage = require('./ssr-page-config')
+const PORT = process.env.NODE_PORT ? parseInt(process.env.NODE_PORT) : 8080
 // const morgan = require('koa-morgan')  for logs
 const app = new Koa()
 app.use(cookie())
@@ -81,9 +82,9 @@ app.use(async(ctx,next)=>{
   }
 })
 
-app.listen(8080)
+app.listen(PORT)
   .on('listening',()=>{
-    console.log(`server started at localhost:8080`);
+    console.log(`server started at localhost:${PORT}`);
   })
   .on('error',(err)=>{
     console.log('---server error---',err)

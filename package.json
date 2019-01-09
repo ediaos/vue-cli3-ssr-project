@@ -12,7 +12,7 @@
     "dev_t2": "cross-env NODE_DEPLOY=t2 npm run dev:all",
     "build:client": "vue-cli-service build",
     "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",
-    "build:all": "npm run build:client && npm run build:ssr",
+    "build:all": "npm run build:client && cross-env NODE_PORT=9080 npm run build:ssr",
     "build": "cross-env NODE_DEPLOY=prod npm run build:all",
     "fvt": "cross-env NODE_DEPLOY=fvt npm run build:all",
     "fvt_dev": "cross-env NODE_DEPLOY=dev npm run build:all",

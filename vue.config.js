@@ -64,7 +64,18 @@ module.exports = {
                 from: resolve("./server"),
                 to: resolve("./dist/server"),
                 toType: "dir",
-                ignore: ["setup-dev-server.js", ".DS_Store"]
+                ignore: ["setup-dev-server.js",'pm2.config.template.js', ".DS_Store"]
+              },
+              {
+                from: resolve("./server/pm2.config.template.js"),
+                to: resolve("./dist/server/pm2.config.js"),
+                transform: function (content) {
+                  console.log('process.env.NODE_PORT',process.env.NODE_PORT)
+                  return content.toString()
+                          .replace('NODE_ENV_VALUE', process.env.NODE_ENV)
+                          .replace('NODE_PORT_VALUE', process.env.NODE_PORT)
+                          .replace('NODE_DEPLOY_VALUE', process.env.NODE_DEPLOY);
+                }
               },
               {
                 from: resolve("./package.json"),
