@@ -42,6 +42,7 @@ export default context => {
         )
       )
         .then(() => {
+          /* eslint-disable-next-line */
           console.log(
             `[DATE] data pre-fetch: ${Date.now() - beginTime}ms url=${fullPath}`
           );

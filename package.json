@@ -19,7 +19,7 @@
     "fvt_t1": "cross-env NODE_DEPLOY=t1 npm run build:all",
     "fvt_t2": "cross-env NODE_DEPLOY=t2 npm run build:all",
     "lint": "vue-cli-service lint",
-    "dist": "cross-env NODE_ENV=production node ./server"
+    "dist": "cross-env NODE_DEPLOY=t1 NODE_ENV=production node ./dist/server"
   },
   "dependencies": {
     "@tujia/fe_css": "^0.1.0",

@@ -65,6 +65,14 @@ module.exports = {
                 to: resolve("./dist/server"),
                 toType: "dir",
                 ignore: ["setup-dev-server.js", ".DS_Store"]
+              },
+              {
+                from: resolve("./package.json"),
+                to: resolve("./dist")
+              },
+              {
+                from: resolve("./package-lock.json"),
+                to: resolve("./dist")
               }
             ])
       )

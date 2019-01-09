@@ -69,7 +69,7 @@ const handleError = (ctx,err) => {
 }
 
 //开放dist目录
-app.use(mount('/static',static(resolve('../dist/static'))))
+app.use(mount('/static',static(resolve('../static'))))
 
 // 处理请求
 app.use(async(ctx,next)=>{
