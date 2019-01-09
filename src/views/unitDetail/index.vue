@@ -36,7 +36,7 @@ export default {
   // eslint-disable-next-line
   asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
     // 使用服务端渲染store子模块注册比较特殊，特殊处理
-    // store.registerSSRModule(PAGE_NAME,storeModule)
+    store.registerSSRModule(PAGE_NAME,storeModule)
     return store.dispatch(`${PAGE_NAME}/FETCH_UNIT_DETAIL`, {
       unitId: params.unitid,
       cookies

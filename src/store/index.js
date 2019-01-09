@@ -3,8 +3,6 @@ import Vuex from "vuex";
 import actions from "./actions";
 import mutations from "./mutations";
 import getters from "./getters";
-import unitDetailModule from './modules/unitDetail'
-const TARGET_NODE = process.env.BUILD_TARGET === 'node' 
 Vue.use(Vuex);
 
 export function createStore() {
@@ -14,16 +12,13 @@ export function createStore() {
     },
     mutations,
     actions,
-    getters,
-    modules:{
-      unitDetail: unitDetailModule
-    }
+    getters
   });
 }
 
 //fix ssr registerModule bug
-Vuex.Store.prototype.registerSSRModule = function(name,storeModule){
+Vuex.Store.prototype.registerSSRModule = function(name,storeModule,isPreserveState=true){
   if(!this._modules.root._children[name]){
-    this.registerModule(name, storeModule,{ preserveState: !TARGET_NODE })
+    this.registerModule(name, storeModule,{ preserveState: isPreserveState && Boolean(this.state[name]) })
   }
 }
