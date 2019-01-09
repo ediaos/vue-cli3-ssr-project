@@ -1,5 +1,5 @@
 
-const deploy = process.env.NODE_DEPLOY
+const deploy = process.env.NODE_DEPLOY || 'prod'
 const envBase = require('./env/env')
 const envDeploy = require(`./env/env.${deploy}`)
 const env = Object.assign(envBase,envDeploy)

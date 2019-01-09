@@ -4,13 +4,13 @@ const nodeExternals = require("webpack-node-externals");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const SpritesmithPlugin = require("webpack-spritesmith");
-const deployConfig = require('./config')
+const deployConfig = require("./config");
 const glob = require("glob");
 const path = require("path");
 const resolve = file => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
-const isDev = process.env.NODE_ENV === "dev"
+const isDev = process.env.NODE_ENV === "dev";
 
 module.exports = {
   assetsDir: "static",
@@ -46,24 +46,28 @@ module.exports = {
       TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin(),
       new webpack.DefinePlugin({
         "process.env.BUILD_TARGET": `"${process.env.BUILD_TARGET}"`,
-        "process.env.NODE_DEPLOY" : `"${process.env.NODE_DEPLOY}"`,
-        "process.env.config" : getDeployConfigDefine()
-      }),
+        "process.env.NODE_DEPLOY": `"${process.env.NODE_DEPLOY}"`,
+        "process.env.config": getDeployConfigDefine()
+      })
     ]
-      .concat( isDev?[] : new CopyWebpackPlugin([
-        {
-          from: resolve("./static"),
-          to: resolve("./dist/static"),
-          toType: "dir",
-          ignore: ["index.html", ".DS_Store"]
-        },
-        {
-          from: resolve("./server"),
-          to: resolve("./dist/server"),
-          toType: "dir",
-          ignore: ["setup-dev-server.js", ".DS_Store"]
-        }
-      ]))
+      .concat(
+        isDev
+          ? []
+          : new CopyWebpackPlugin([
+              {
+                from: resolve("./static"),
+                to: resolve("./dist/static"),
+                toType: "dir",
+                ignore: ["index.html", ".DS_Store"]
+              },
+              {
+                from: resolve("./server"),
+                to: resolve("./dist/server"),
+                toType: "dir",
+                ignore: ["setup-dev-server.js", ".DS_Store"]
+              }
+            ])
+      )
       .concat(TARGET_NODE ? [] : getCssSpritesPlugins())
   }),
   chainWebpack: config => {
@@ -120,12 +124,12 @@ module.exports = {
 };
 
 // deploy config converter
-function getDeployConfigDefine(){
-  let config = {}
+function getDeployConfigDefine() {
+  let config = {};
   Object.keys(deployConfig.env).forEach(function(key) {
-    config[key] = `"${deployConfig.env[key]}"`
-  })
-  return config
+    config[key] = `"${deployConfig.env[key]}"`;
+  });
+  return config;
 }
 
 // 解决雪碧图问题

@@ -28,7 +28,7 @@ Vue.mixin({
     asyncDataPromise(this, this.$route);
   },
   beforeRouteUpdate(to, from, next) {
-    isSSRClientFirstLoad = false
+    isSSRClientFirstLoad = false;
     asyncDataPromise(this, to, true);
     next();
   }

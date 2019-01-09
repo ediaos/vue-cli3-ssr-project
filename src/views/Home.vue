@@ -5,15 +5,13 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import TopicItem from "../components/TopicItem";
 // @ is an alias to /src
 export default {
   name: "home",
-  tdk(){
+  tdk() {
     return {
-      title: '首页'
-    }
+      title: "首页"
+    };
   }
 };
 </script>

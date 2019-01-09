@@ -11,9 +11,9 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
-import storeModule from '@/store/modules/unitDetail'
-const PAGE_NAME = "unitDetail"
+// import { mapState, mapGetters } from "vuex";
+import storeModule from "@/store/modules/unitDetail";
+const PAGE_NAME = "unitDetail";
 
 export default {
   name: PAGE_NAME,
@@ -21,11 +21,13 @@ export default {
     return {};
   },
   computed: {
-    apiData () {
-      return this.$store.state[PAGE_NAME] && this.$store.state[PAGE_NAME].apiData
+    apiData() {
+      return (
+        this.$store.state[PAGE_NAME] && this.$store.state[PAGE_NAME].apiData
+      );
     },
-    detail(){
-      return this.apiData&&this.apiData.isSuccess&&this.apiData.data
+    detail() {
+      return this.apiData && this.apiData.isSuccess && this.apiData.data;
     }
   },
   tdk() {
@@ -36,7 +38,7 @@ export default {
   // eslint-disable-next-line
   asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
     // 使用服务端渲染store子模块注册比较特殊，特殊处理
-    store.registerSSRModule(PAGE_NAME,storeModule)
+    store.registerSSRModule(PAGE_NAME, storeModule);
     return store.dispatch(`${PAGE_NAME}/FETCH_UNIT_DETAIL`, {
       unitId: params.unitid,
       cookies

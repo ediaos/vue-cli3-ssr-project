@@ -17,8 +17,14 @@ export function createStore() {
 }
 
 //fix ssr registerModule bug
-Vuex.Store.prototype.registerSSRModule = function(name,storeModule,isPreserveState=true){
-  if(!this._modules.root._children[name]){
-    this.registerModule(name, storeModule,{ preserveState: isPreserveState && Boolean(this.state[name]) })
+Vuex.Store.prototype.registerSSRModule = function(
+  name,
+  storeModule,
+  isPreserveState = true
+) {
+  if (!this._modules.root._children[name]) {
+    this.registerModule(name, storeModule, {
+      preserveState: isPreserveState && Boolean(this.state[name])
+    });
   }
-}
+};

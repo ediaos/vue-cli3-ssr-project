@@ -24,4 +24,4 @@ export default {
       state.apiData = data || {};
     }
   }
-}
+};
