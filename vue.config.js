@@ -70,7 +70,6 @@ module.exports = {
                 from: resolve("./server/pm2.config.template.js"),
                 to: resolve("./dist/server/pm2.config.js"),
                 transform: function (content) {
-                  console.log('process.env.NODE_PORT',process.env.NODE_PORT)
                   return content.toString()
                           .replace('NODE_ENV_VALUE', process.env.NODE_ENV)
                           .replace('NODE_PORT_VALUE', process.env.NODE_PORT)

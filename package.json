@@ -28,6 +28,7 @@
     "js-cookie": "^2.2.0",
     "koa": "^2.6.2",
     "koa-cookie": "^1.0.0",
+    "koa-morgan": "^1.0.1",
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
     "vant": "^1.5.1",
