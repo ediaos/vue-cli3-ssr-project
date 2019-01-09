@@ -84,11 +84,8 @@ module.exports = {
       .set("@", resolve("src"))
       .set("@lib", "@tujia/fe_js_com/src")
       .set("@assets", resolve("src/assets"))
-      .set("@img", resolve("src/assets/images"))
-      .set("@sprites", resolve("src/assets/css/sprites"));
     config.resolve.modules
-      .add(resolve("src/assets/images/sprites/build"))
-      .add(resolve("src/assets/css/sprites"));
+      .add("assets/images/sprites/build");
 
     // reset public/index.html to static/index.html
     config.plugin("html").tap(args => {
@@ -155,7 +152,7 @@ function getCssSpritesPlugins() {
         },
         target: {
           image: resolve(`src/assets/images/sprites/build/${name}.png`),
-          css: resolve(`src/assets/css/sprites/build/${name}.scss`)
+          css: resolve(`src/assets/images/sprites/build/${name}.scss`)
         },
         apiOptions: {
           cssImageRef: `~${name}.png`

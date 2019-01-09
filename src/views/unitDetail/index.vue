@@ -7,6 +7,7 @@
 <template>
   <article v-if="detail" class='g-unit-detail'>
     {{detail.unit.unitName}}
+    <div class="icon-landlord"></div>
   </article>
 </template>
 
@@ -71,4 +72,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '~page-unit-detail.scss';
+@include sprites([$icon-landlord]);
 </style>
