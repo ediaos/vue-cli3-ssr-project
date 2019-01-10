@@ -4,8 +4,7 @@ import Vue from 'vue'
 import { createApp } from './main'
 const { app, router, store } = createApp()
 const userAgent = navigator.userAgent
-const isSSRClient =
-  document.body.getAttribute('data-server-rendered-page') === 'true'
+const isSSRClient = document.body.getAttribute('data-server-rendered-page') === 'true'
 let isSSRClientFirstLoad = isSSRClient
 const loading = Vue.prototype.$loading
 
@@ -53,7 +52,9 @@ function beforeResolveHandle(to, from) {
 
 function checkIsNeedLoading(matchedComponents) {
   const asyncDataHooks = matchedComponents.map((c) => c.asyncData).filter((_) => _)
-  if (!asyncDataHooks.length) { return }
+  if (!asyncDataHooks.length) {
+    return
+  }
   loading(true)
 }
 
