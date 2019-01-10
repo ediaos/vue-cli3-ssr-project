@@ -1,4 +1,5 @@
 import "@tujia/fe_css/lib/pc-base.css";
+import './business/elementUI'
 import Vue from "vue";
 import App from "./App.vue";
 import { createRouter } from "./router";
@@ -8,11 +9,6 @@ import tdkMixin from "./utils/tdk";
 Vue.mixin(tdkMixin);
 //关闭生产模式下给出的提示
 Vue.config.productionTip = true;
-
-// for using vant components
-import Vant from "vant";
-import "vant/lib/index.css";
-Vue.use(Vant);
 
 export function createApp() {
   const router = createRouter();

@@ -7,20 +7,7 @@ const userAgent = navigator.userAgent;
 const isSSRClient =
   document.body.getAttribute("data-server-rendered-page") === "true";
 let isSSRClientFirstLoad = isSSRClient;
-const loading = isLoading => {
-  if (isLoading) {
-    Vue.prototype.$toast.loading({
-      mask: true,
-      message: "加载中...",
-      overlayStyle: {
-        backgroundColor: "rgba(0, 0, 0, 0.1)"
-      },
-      duration: 0
-    });
-  } else {
-    Vue.prototype.$toast.clear();
-  }
-};
+const loading = Vue.prototype.$loading
 
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
