@@ -5,21 +5,25 @@
  * querys:  
  */
 <template>
-  <article v-if="detail" class='g-unit-detail'>
+  <article v-if="detail" class="g-unit-detail">
     {{detail.unit.unitName}}
-    <div class="icon-landlord"></div>
+    <div v-if="isMounted" class="icon-landlord"></div>
   </article>
 </template>
 
 <script>
 // import { mapState, mapGetters } from "vuex";
 import storeModule from "@/store/modules/unitDetail";
+const TARGET_NODE = process.env.BUILD_TARGET === "node"
 const PAGE_NAME = "unitDetail";
 
 export default {
   name: PAGE_NAME,
   data() {
-    return {};
+    return {
+      // 控制是否客户端渲染
+      isMounted: false
+    };
   },
   computed: {
     apiData() {
@@ -46,6 +50,7 @@ export default {
     });
   },
   mounted() {
+    this.isMounted = true
     this.dataPromiseCallBack();
   },
   beforeRouteUpdate(to, from, next) {
