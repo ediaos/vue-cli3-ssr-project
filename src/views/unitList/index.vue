@@ -1,9 +1,9 @@
 /**
  * dev  : guoxing
  * desc : 说明
- * props: 
- * emit : 
- * slot : 
+ * props:
+ * emit :
+ * slot :
  */
 <template>
   <article class='g-unit-list'>
@@ -13,9 +13,9 @@
 
 <script>
 export default {
-  name: "unitList",
+  name: 'unitList',
   data: () => ({})
-};
+}
 </script>
 
 <style lang="scss" scoped>

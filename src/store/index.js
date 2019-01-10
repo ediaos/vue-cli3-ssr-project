@@ -1,9 +1,9 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import actions from "./actions";
-import mutations from "./mutations";
-import getters from "./getters";
-Vue.use(Vuex);
+import Vue from 'vue'
+import Vuex from 'vuex'
+import actions from './actions'
+import mutations from './mutations'
+import getters from './getters'
+Vue.use(Vuex)
 
 export function createStore() {
   return new Vuex.Store({
@@ -13,10 +13,10 @@ export function createStore() {
     mutations,
     actions,
     getters
-  });
+  })
 }
 
-//fix ssr registerModule bug
+// fix ssr registerModule bug
 Vuex.Store.prototype.registerSSRModule = function(
   name,
   storeModule,
@@ -25,6 +25,6 @@ Vuex.Store.prototype.registerSSRModule = function(
   if (!this._modules.root._children[name]) {
     this.registerModule(name, storeModule, {
       preserveState: isPreserveState && Boolean(this.state[name])
-    });
+    })
   }
-};
+}

@@ -7,13 +7,13 @@
 <script>
 // @ is an alias to /src
 export default {
-  name: "home",
+  name: 'home',
   tdk() {
     return {
-      title: "首页"
-    };
+      title: '首页'
+    }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .topics-list {
