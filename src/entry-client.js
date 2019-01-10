@@ -5,6 +5,7 @@ import { createApp } from './main'
 const { app, router, store } = createApp()
 const userAgent = navigator.userAgent
 const isSSRClient = document.body.getAttribute('data-server-rendered-page') === 'true'
+document.body.removeAttribute('data-server-rendered-page')
 let isSSRClientFirstLoad = isSSRClient
 const loading = Vue.prototype.$loading
 
