@@ -20,7 +20,7 @@ module.exports = {
   },
   transpileDependencies: [resolve('node_modules/@tujia/fe_js_com/src')],
   // eslint-disable-next-line
-  configureWebpack: config => ({
+  configureWebpack: (config) => ({
     entry: `./src/entry-${target}.js`,
     target: TARGET_NODE ? 'node' : 'web',
     node: TARGET_NODE ? undefined : false,
@@ -33,14 +33,38 @@ module.exports = {
     // 并生成较小的 bundle 文件。
     externals: TARGET_NODE
       ? nodeExternals({
-        // 不要外置化 webpack 需要处理的依赖模块。
-        // 你可以在这里添加更多的文件类型。例如，未处理 *.vue 原始文件，
-        // 你还应该将修改 `global`（例如 polyfill）的依赖模块列入白名单
-        whitelist: [/\.css$/]
-      })
+          // 不要外置化 webpack 需要处理的依赖模块。
+          // 你可以在这里添加更多的文件类型。例如，未处理 *.vue 原始文件，
+          // 你还应该将修改 `global`（例如 polyfill）的依赖模块列入白名单
+          whitelist: [/\.css$/]
+        })
       : undefined,
     optimization: {
-      splitChunks: TARGET_NODE ? false : undefined
+      splitChunks: TARGET_NODE
+        ? false
+        : {
+            chunks: 'all',
+            cacheGroups: {
+              libs: {
+                name: 'chunk-vendors',
+                test: /[\/]node_modules[\/]/,
+                priority: 10,
+                chunks: 'initial' // 只打包初始时依赖的第三方
+              },
+              elementUI: {
+                name: 'chunk-elementUI', // 单独将 elementUI 拆包
+                priority: 20, // 权重要大于 libs 和 app 不然会被打包进 libs 或者 app
+                test: /[\/]node_modules[\/]element-ui[\/]/
+              }
+              // commons: {
+              //   name: 'chunk-comomns',
+              //   test: resolve('src/components'), // 可自定义拓展你的规则,可后续根据业务拆分
+              //   minChunks: 2, // 最小共用次数
+              //   priority: 5,
+              //   reuseExistingChunk: true
+              // }
+            }
+          }
     },
     plugins: [
       TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin(),
@@ -54,37 +78,38 @@ module.exports = {
         isDev
           ? []
           : new CopyWebpackPlugin([
-            {
-              from: resolve('./static'),
-              to: resolve('./dist/static'),
-              toType: 'dir',
-              ignore: ['index.html', '.DS_Store']
-            },
-            {
-              from: resolve('./server'),
-              to: resolve('./dist/server'),
-              toType: 'dir',
-              ignore: ['setup-dev-server.js', 'pm2.config.template.js', '.DS_Store']
-            },
-            {
-              from: resolve('./server/pm2.config.template.js'),
-              to: resolve('./dist/server/pm2.config.js'),
-              transform: function(content) {
-                return content.toString()
-                  .replace('NODE_ENV_VALUE', process.env.NODE_ENV)
-                  .replace('NODE_PORT_VALUE', process.env.NODE_PORT)
-                  .replace('NODE_DEPLOY_VALUE', process.env.NODE_DEPLOY)
+              {
+                from: resolve('./static'),
+                to: resolve('./dist/static'),
+                toType: 'dir',
+                ignore: ['index.html', '.DS_Store']
+              },
+              {
+                from: resolve('./server'),
+                to: resolve('./dist/server'),
+                toType: 'dir',
+                ignore: ['setup-dev-server.js', 'pm2.config.template.js', '.DS_Store']
+              },
+              {
+                from: resolve('./server/pm2.config.template.js'),
+                to: resolve('./dist/server/pm2.config.js'),
+                transform: function(content) {
+                  return content
+                    .toString()
+                    .replace('NODE_ENV_VALUE', process.env.NODE_ENV)
+                    .replace('NODE_PORT_VALUE', process.env.NODE_PORT)
+                    .replace('NODE_DEPLOY_VALUE', process.env.NODE_DEPLOY)
+                }
+              },
+              {
+                from: resolve('./package.json'),
+                to: resolve('./dist')
+              },
+              {
+                from: resolve('./package-lock.json'),
+                to: resolve('./dist')
               }
-            },
-            {
-              from: resolve('./package.json'),
-              to: resolve('./dist')
-            },
-            {
-              from: resolve('./package-lock.json'),
-              to: resolve('./dist')
-            }
-          ])
+            ])
       )
       .concat(TARGET_NODE ? [] : getCssSpritesPlugins())
   }),
@@ -94,8 +119,7 @@ module.exports = {
       .set('@', resolve('src'))
       .set('@lib', '@tujia/fe_js_com/src')
       .set('@assets', resolve('src/assets'))
-    config.resolve.modules
-      .add('assets/images/sprites/build')
+    config.resolve.modules.add('assets/images/sprites/build')
 
     // reset public/index.html to static/index.html
     config.plugin('html').tap((args) => {
@@ -153,7 +177,9 @@ function getCssSpritesPlugins() {
   let plugins = []
   glob.sync(path + '/*').forEach((dirPath) => {
     let name = dirPath.replace(path + '/', '')
-    if (name === 'build') { return }
+    if (name === 'build') {
+      return
+    }
     plugins.push(
       new SpritesmithPlugin({
         src: {
