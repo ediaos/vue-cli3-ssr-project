@@ -1,4 +1,4 @@
-const TARGET_NODE = process.env.BUILD_TARGET === 'node'
+const TARGET_NODE = process.env.VUE_ENV === 'server'
 
 function getTdk(vm) {
   const { tdk } = vm.$options
@@ -19,9 +19,7 @@ function updateTdk(vm, vdom) {
   if (vdom) {
     vdom.title = vdom.title || '途家网'
     vdom.description = vdom.description || '手机途家网'
-    vdom.keywords =
-      vdom.keywords ||
-      '酒店式公寓，家庭旅馆，日租房，短租房，度假公寓，手机途家网'
+    vdom.keywords = vdom.keywords || '酒店式公寓，家庭旅馆，日租房，短租房，度假公寓，手机途家网'
     vdom.ssrHeadAddInfo = vdom.ssrHeadAddInfo || ''
   }
 }

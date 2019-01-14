@@ -3,7 +3,7 @@
  * 方法名以fetch作为开头
  */
 import fetch from './tjFetch'
-const TARGET_NODE = process.env.BUILD_TARGET === 'node'
+const TARGET_NODE = process.env.VUE_ENV === 'server'
 const baseUrl = TARGET_NODE ? fetch.envConfig.TUJIA_HOST : ''
 
 const apiConfig = {

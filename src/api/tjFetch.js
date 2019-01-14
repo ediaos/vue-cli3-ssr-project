@@ -5,7 +5,7 @@
  * 失败情况返回 {errorNo,errorMsg}
  */
 import Fetch from '@lib/utils/fetch.js'
-const TARGET_NODE = process.env.BUILD_TARGET === 'node'
+const TARGET_NODE = process.env.VUE_ENV === 'server'
 // 注册给接口使用的环境配置
 Fetch.prototype.envConfig = process.env.config
 
