@@ -50,6 +50,7 @@ const updateClientManifest = async()=>{
   else{
     console.log('updateClientManifest err',result)
   }
+  serverLog()
 }
 
 const clientCompilerUpdate = async ()=>{
@@ -61,18 +62,14 @@ const clientCompilerUpdate = async ()=>{
   }
 }
 
-function serverLog(){
-  setTimeout(() => {
-    console.log()
-    console.log(` SSR App running at:   ${chalk.cyan('http://localhost:8080')}`)
-    console.log(` ${chalk.yellow('Current page is SSR ,"http://localhost:8081" is a static path')}`)
-  }, 3000);
+function serverLog() {
+  console.log(` Current App running at:   ${chalk.yellow('http://localhost:8080')} , ignore 8081 port`)
+  console.log()
 }
 
 module.exports = async function setupServer (app, createRenderer){
   devMiddleWare(app)
   renderer = createRenderer 
-  serverLog()
 }
 
 function devMiddleWare(app){
