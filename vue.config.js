@@ -14,6 +14,7 @@ const isDev = process.env.NODE_ENV === 'dev'
 
 module.exports = {
   assetsDir: 'static',
+  baseUrl: deployConfig.env.TUJIA_CDN_HOST,
   devServer: {
     headers: { 'Access-Control-Allow-Origin': '*' },
     proxy: deployConfig.dev.proxyTable
