@@ -1,14 +1,52 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>{{ title }}</title>
-    <meta name="description" content="{{ description }}">
-    <meta name="keywords" content="{{ keywords }}"> {{{ ssrHeadAddInfo }}}
+    <meta name="description" content="{{ description }}" />
+    <meta name="keywords" content="{{ keywords }}" />
+    {{{ ssrHeadAddInfo
+
+    }}}
+    <link rel="shortcut icon" href="https://staticfile.tujia.com/PortalSite/Images/favicon.ico" type="image/x-icon" />
   </head>
   <body data-server-rendered-page="true">
+    <!--[if lte IE 8]>
+      <div class="ie-tips">
+        <div class="tips-up">
+          <div class="tip-image"></div>
+          <div>
+            <p class="font-16">亲爱的用户，因浏览器版本过低，您所浏览的页面飞走了</p>
+            <p>建议您更新浏览器或通过APP、微信访问途家网</p>
+          </div>
+          <div>
+            <a href="https://support.microsoft.com/zh-cn/help/17621/internet-explorer-downloads" target="_blank"> <span></span> <span>更新IE浏览器</span> </a>
+            <a href="http://www.google.cn/chrome/browser/desktop/" target="_blank"> <span></span> <span>下载Chrome浏览器</span> </a>
+            <a href="http://se.360.cn/" target="_blank"> <span class="ico3"></span> <span>下载360浏览器</span> </a>
+          </div>
+        </div>
+        <div class="tips-down">
+          <ul>
+            <li>
+              <p class="code-left"><span></span></p>
+              <p>
+                <span class="font-16">扫码下载途家APP</span><br />
+                <span class="gray-font">随时随地预订公寓民宿</span>
+              </p>
+            </li>
+            <li>
+              <p class="code-right"><span></span></p>
+              <p>
+                <span class="font-16">微信关注途家服务号</span><br />
+                <span class="gray-font">预订更方便</span>
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    <![endif]-->
     <!--vue-ssr-outlet-->
   </body>
 </html>
