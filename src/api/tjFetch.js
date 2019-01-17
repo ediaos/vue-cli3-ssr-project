@@ -4,43 +4,43 @@
  * 当errcode===999则跳转到验证码页面
  * 失败情况返回 {errorNo,errorMsg}
  */
-import Fetch from '@lib/utils/fetch.js'
-const TARGET_NODE = process.env.VUE_ENV === 'server'
+import Fetch from "@lib/utils/fetch.js";
+const TARGET_NODE = process.env.VUE_ENV === "server";
 // 注册给接口使用的环境配置
-Fetch.prototype.envConfig = process.env.config
+Fetch.prototype.envConfig = process.env.config;
 
 export default new Fetch({
-  reqHandle: (options) => {
+  reqHandle: options => {
     // 服务端渲染 增加cookie传输
     if (options.data && options.data.cookies) {
       if (TARGET_NODE) {
-        options.headers = options.headers || {}
-        options.headers.cookie = getCookieString(options.data.cookies)
+        options.headers = options.headers || {};
+        options.headers.cookie = getCookieString(options.data.cookies);
       }
-      delete options.data.cookies
+      delete options.data.cookies;
     }
   },
-  resHandle: (res) => {
-    const isSuccess = res.ret || res.isSuccess
-    const data = res.data || res.content || res
+  resHandle: res => {
+    const isSuccess = res.ret || res.isSuccess;
+    const data = res.data || res.content || res;
     if (isSuccess) {
-      return Promise.resolve(data)
+      return Promise.resolve(data);
     } else {
       /* eslint-disable-next-line */
       return Promise.reject({
         errorNo: res.errcode || res.errorNo || res.errorCode,
         errorMsg: res.errmsg || res.errorMsg || res.errorMessage
-      })
+      });
     }
   }
-})
+});
 
 function getCookieString(cookies) {
-  let cookieStr = ''
+  let cookieStr = "";
   for (var variable in cookies) {
     if (cookies.hasOwnProperty(variable)) {
-      cookieStr += `${variable}=${encodeURIComponent(cookies[variable])}; `
+      cookieStr += `${variable}=${encodeURIComponent(cookies[variable])}; `;
     }
   }
-  return cookieStr
+  return cookieStr;
 }

@@ -3,4 +3,4 @@ export default {
   //   const data = state.unitDetailApiData;
   //   return data && data.isSuccess && data.data;
   // }
-}
+};
