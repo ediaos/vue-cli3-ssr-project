@@ -10,14 +10,14 @@ const path = require('path')
 const resolve = (file) => path.resolve(__dirname, file)
 const TARGET_NODE = process.env.BUILD_TARGET === 'node'
 const target = TARGET_NODE ? 'server' : 'client'
-const isDev = process.env.NODE_ENV === 'dev'
-
+const isDev = process.env.NODE_ENV && process.env.NODE_ENV.indexOf('dev') > -1
 module.exports = {
   assetsDir: 'static',
-  baseUrl: deployConfig.env.TUJIA_CDN_HOST,
+  baseUrl: deployConfig[`${isDev ? 'dev' : 'build'}`].assetsPublicPath,
   devServer: {
     headers: { 'Access-Control-Allow-Origin': '*' },
-    proxy: deployConfig.dev.proxyTable
+    proxy: deployConfig.dev.proxyTable,
+    disableHostCheck: true //  新增该配置项
   },
   transpileDependencies: [resolve('node_modules/@tujia/fe_js_com/src')],
   // eslint-disable-next-line
@@ -157,7 +157,7 @@ module.exports = {
     }
 
     // fix ssr hot update bug
-    if (isDev && TARGET_NODE) {
+    if (TARGET_NODE) {
       config.plugins.delete('hmr')
     }
   }
