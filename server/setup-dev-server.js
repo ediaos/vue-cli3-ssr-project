@@ -72,7 +72,13 @@ function devMiddleWare(app) {
   // 接口代理
   const proxyTable = config.dev.proxyTable
   Object.keys(proxyTable).forEach(function(key) {
-    app.use(proxy(key, proxyTable[key]))
+    const item = proxyTable[key]
+    if (item.pathRewrite) {
+      // fix server koa proxy no working pathRewrite
+      let pathRewriteKey = Object.keys(item.pathRewrite)[0]
+      item.rewrite = (path) => path.replace(new RegExp(pathRewriteKey), item.pathRewrite[pathRewriteKey])
+    }
+    app.use(proxy(key, item))
   })
   // 静态资源代理
   app.use(async (ctx, next) => {
