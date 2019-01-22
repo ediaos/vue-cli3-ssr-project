@@ -1,5 +1,5 @@
 {
-  "name": "ssr_test",
+  "name": "vue-cli3-ssr-project",
   "version": "0.1.0",
   "private": true,
   "scripts": {
