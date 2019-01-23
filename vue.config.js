@@ -3,20 +3,22 @@ const VueSSRClientPlugin = require("vue-server-renderer/client-plugin");
 const nodeExternals = require("webpack-node-externals");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const deployConfig = require("./config");
 const path = require("path");
 const resolve = file => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
-const isDev =
-  process.env.NODE_ENV === "development" ||
-  process.env.NODE_ENV === "development_node";
-const isSSRClient = process.env.BUILD_CLIENT_TARGET === "SSR";
+const isDev = process.env.NODE_ENV && process.env.NODE_ENV.indexOf("dev") > -1;
+
 module.exports = {
-  baseUrl: isDev && isSSRClient ? "http://localhost:8081" : "/",
+  baseUrl: deployConfig[`${isDev ? "dev" : "build"}`].assetsPublicPath,
   assetsDir: "static",
   devServer: {
-    headers: { "Access-Control-Allow-Origin": "*" }
+    headers: { "Access-Control-Allow-Origin": "*" },
+    proxy: deployConfig.dev.proxyTable,
+    disableHostCheck: true //  新增该配置项 fix ssr console error
   },
+  transpileDependencies: [],
   // eslint-disable-next-line
   configureWebpack: config => ({
     entry: `./src/entry-${target}.js`,
@@ -43,19 +45,58 @@ module.exports = {
     plugins: [
       TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin(),
       new webpack.DefinePlugin({
-        "process.env.BUILD_TARGET": `"${process.env.BUILD_TARGET}"`
-      }),
-      new CopyWebpackPlugin([
-        {
-          from: resolve("./static"),
-          to: resolve("./dist/static"),
-          toType: "dir",
-          ignore: ["index.html", ".DS_Store"]
-        }
-      ])
-    ]
+        "process.env.VUE_ENV": `"${target}"`,
+        "process.env.NODE_DEPLOY": `"${process.env.NODE_DEPLOY}"`,
+        "process.env.config": getDeployConfigDefine()
+      })
+    ].concat(
+      isDev
+        ? []
+        : new CopyWebpackPlugin([
+            {
+              from: resolve("./static"),
+              to: resolve("./dist/static"),
+              toType: "dir",
+              ignore: ["index.html", ".DS_Store"]
+            },
+            {
+              from: resolve("./server"),
+              to: resolve("./dist/server"),
+              toType: "dir",
+              ignore: [
+                "setup-dev-server.js",
+                "pm2.config.template.js",
+                ".DS_Store"
+              ]
+            },
+            {
+              from: resolve("./server/pm2.config.template.js"),
+              to: resolve("./dist/server/pm2.config.js"),
+              transform: function(content) {
+                return content
+                  .toString()
+                  .replace("NODE_ENV_VALUE", process.env.NODE_ENV)
+                  .replace("NODE_PORT_VALUE", process.env.NODE_PORT)
+                  .replace("NODE_DEPLOY_VALUE", process.env.NODE_DEPLOY);
+              }
+            },
+            {
+              from: resolve("./package.json"),
+              to: resolve("./dist")
+            },
+            {
+              from: resolve("./package-lock.json"),
+              to: resolve("./dist")
+            }
+          ])
+    )
   }),
   chainWebpack: config => {
+    // alias
+    config.resolve.alias
+      .set("@", resolve("src"))
+      .set("@assets", resolve("src/assets"));
+
     // reset public/index.html to static/index.html
     config.plugin("html").tap(args => {
       args[0].template = resolve("./static/index.html");
@@ -91,8 +132,17 @@ module.exports = {
     }
 
     // fix ssr hot update bug
-    if (isDev && TARGET_NODE) {
+    if (TARGET_NODE) {
       config.plugins.delete("hmr");
     }
   }
 };
+
+// deploy config converter
+function getDeployConfigDefine() {
+  let config = {};
+  Object.keys(deployConfig.env).forEach(function(key) {
+    config[key] = `"${deployConfig.env[key]}"`;
+  });
+  return config;
+}
