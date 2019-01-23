@@ -48,7 +48,7 @@ async function ssrRequestHandle(ctx, next) {
   const s = Date.now();
   ctx.set("Content-Type", "text/html");
   const context = {
-    title: "途家网", // default title
+    title: "SSR PAGE TITLE", // default title
     url: ctx.url,
     cookies: ctx.cookie || {}, // for cookie using
     userAgent: ctx.header["user-agent"]
