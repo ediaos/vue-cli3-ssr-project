@@ -5,6 +5,7 @@ const { app, router, store } = createApp();
 const userAgent = navigator.userAgent;
 const isSSRClient =
   document.body.getAttribute("data-server-rendered-page") === "true";
+document.body.removeAttribute("data-server-rendered-page");
 let isSSRClientFirstLoad = isSSRClient;
 
 const loading = isLoading => {
@@ -28,6 +29,7 @@ Vue.mixin({
     asyncDataPromise(this, this.$route);
   },
   beforeRouteUpdate(to, from, next) {
+    isSSRClientFirstLoad = false;
     asyncDataPromise(this, to, true);
     next();
   }

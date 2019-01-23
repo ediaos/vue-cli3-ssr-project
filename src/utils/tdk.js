@@ -1,4 +1,4 @@
-const TARGET_NODE = process.env.BUILD_TARGET === "node";
+const TARGET_NODE = process.env.VUE_ENV === "server";
 
 function getTdk(vm) {
   const { tdk } = vm.$options;
@@ -10,12 +10,17 @@ function getTdk(vm) {
 function updateTdk(vm, vdom) {
   const tdk = getTdk(vm);
   if (tdk) {
-    tdk.updateTdk = updateTdk;
-    vdom.title = tdk.title || "";
-    vdom.description = tdk.description || "";
-    vdom.keywords = tdk.keywords || "";
+    vdom.title = tdk.title;
+    vdom.description = tdk.description;
+    vdom.keywords = tdk.keywords;
     // for append more meta or link seo need
-    vdom.ssrHeadAddInfo = tdk.ssrHeadAddInfo || "";
+    vdom.ssrHeadAddInfo = tdk.ssrHeadAddInfo;
+  }
+  if (vdom) {
+    vdom.title = vdom.title || "SSR PAGE";
+    vdom.description = vdom.description || "";
+    vdom.keywords = vdom.keywords || "";
+    vdom.ssrHeadAddInfo = vdom.ssrHeadAddInfo || "";
   }
 }
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
-const cnodeBaseUrl = process.env.VUE_APP_HOST_TOPIC_LIST;
+const cnodeBaseUrl = TARGET_NODE ? process.env.config.CNODE_HOST : "/feapi";
 export function fetchTopics({ cookies }) {
   return axios.get(cnodeBaseUrl + "/api/v1/topics", {
     headers: getCommonHeader({ cookies })

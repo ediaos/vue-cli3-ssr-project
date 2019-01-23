@@ -13,6 +13,7 @@ export default context => {
 
     const { fullPath } = router.resolve(url).route;
     if (fullPath !== url) {
+      /* eslint-disable-next-line */
       return reject({ url: fullPath });
     }
 
@@ -23,6 +24,7 @@ export default context => {
       const matchedComponents = router.getMatchedComponents();
       // no matched routes
       if (!matchedComponents.length) {
+        /* eslint-disable-next-line */
         return reject({ code: 404 });
       }
       // Call fetchData hooks on components matched by the route.
@@ -42,9 +44,8 @@ export default context => {
         )
       )
         .then(() => {
-          console.log(
-            `[DATE] data pre-fetch: ${Date.now() - beginTime}ms url=${fullPath}`
-          );
+          /* eslint-disable-next-line */
+          console.log(`[DATE] data pre-fetch: ${Date.now() - beginTime}ms url=${fullPath}`);
           // After all preFetch hooks are resolved, our store is now
           // filled with the state needed to render the app.
           // Expose the state on the render context, and let the request handler

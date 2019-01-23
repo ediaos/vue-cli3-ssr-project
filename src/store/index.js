@@ -9,6 +9,7 @@ Vue.use(Vuex);
 export function createStore() {
   return new Vuex.Store({
     state: {
+      envConfig: process.env.config,
       topicsList: null,
       topicDetail: null
     },
