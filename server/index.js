@@ -45,7 +45,6 @@ setupServer(app, (bundle, options) => {
 });
 // eslint-disable-next-line
 async function ssrRequestHandle(ctx, next) {
-  const s = Date.now();
   ctx.set("Content-Type", "text/html");
   const context = {
     title: "SSR PAGE TITLE", // default title
