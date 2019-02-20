@@ -1,9 +1,14 @@
 <template>
   <div class="home">
     <!-- v-if="isMounted" -->
-    <img alt="Vue logo" src="../assets/logo.png">
+    <img alt="Vue logo" src="../assets/logo.png" />
     <div v-if="topicsList" class="topics-list">
-      <topic-item v-for="item in topicsList" :key="item.id" :topicInfo="item" @click="navDetail(item)"/>
+      <topic-item
+        v-for="item in topicsList"
+        :key="item.id"
+        :topicInfo="item"
+        @click="navDetail(item)"
+      />
     </div>
   </div>
 </template>

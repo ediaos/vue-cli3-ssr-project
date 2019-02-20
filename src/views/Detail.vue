@@ -3,13 +3,12 @@
     <div v-if="topicsList" class="footer">
       <span @click="prev">上一篇</span> | <span @click="next">下一篇</span>
     </div>
-    <h1>{{topicDetail.title}}</h1>
+    <h1>{{ topicDetail.title }}</h1>
     <div>
-      作者: {{topicDetail.author.loginname}} 时间: {{ topicDetail.create_at }}
-      <span v-if="pageIndex>-1">位置:{{pageIndex}}</span>
+      作者: {{ topicDetail.author.loginname }} 时间: {{ topicDetail.create_at }}
+      <span v-if="pageIndex > -1">位置:{{ pageIndex }}</span>
     </div>
-    <div v-html="topicDetail.content">
-    </div>
+    <div v-html="topicDetail.content"></div>
   </div>
 </template>
 <script>
