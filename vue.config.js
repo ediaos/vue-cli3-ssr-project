@@ -81,7 +81,7 @@ module.exports = {
               to: resolve("./dist")
             },
             {
-              from: resolve("./package-lock.json"),
+              from: resolve("./yarn.lock"),
               to: resolve("./dist")
             }
           ])
