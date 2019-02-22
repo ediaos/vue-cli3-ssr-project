@@ -12,6 +12,7 @@ const isDev = process.env.NODE_ENV && process.env.NODE_ENV.indexOf("dev") > -1;
 
 module.exports = {
   baseUrl: deployConfig[`${isDev ? "dev" : "build"}`].assetsPublicPath,
+  publicPath: deployConfig[`${isDev ? "dev" : "build"}`].assetsPublicPath,
   assetsDir: "static",
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },
@@ -102,6 +103,11 @@ module.exports = {
       args[0].template = resolve("./static/index.html");
       return args;
     });
+
+    config.plugins.delete("preload");
+    config.plugins.delete("prefetch");
+    config.plugins.delete("preload-index");
+    config.plugins.delete("prefetch-index");
 
     if (TARGET_NODE) {
       // 优化ssr loader
