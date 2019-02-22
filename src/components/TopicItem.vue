@@ -1,7 +1,7 @@
 <template>
-  <div class="topics-list__item" @click="$emit('click',topicInfo)">
-      <h3>{{topicInfo.title}}</h3>
-      <span>{{topicInfo.create_at}}</span>
+  <div class="topics-list__item" @click="$emit('click', topicInfo)">
+    <h3>{{ topicInfo.title }}</h3>
+    <span>{{ topicInfo.create_at }}</span>
   </div>
 </template>
 

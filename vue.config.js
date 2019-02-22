@@ -11,7 +11,7 @@ const target = TARGET_NODE ? "server" : "client";
 const isDev = process.env.NODE_ENV && process.env.NODE_ENV.indexOf("dev") > -1;
 
 module.exports = {
-  baseUrl: deployConfig[`${isDev ? "dev" : "build"}`].assetsPublicPath,
+  publicPath: deployConfig[`${isDev ? "dev" : "build"}`].assetsPublicPath,
   assetsDir: "static",
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },
@@ -63,11 +63,7 @@ module.exports = {
               from: resolve("./server"),
               to: resolve("./dist/server"),
               toType: "dir",
-              ignore: [
-                "setup-dev-server.js",
-                "pm2.config.template.js",
-                ".DS_Store"
-              ]
+              ignore: ["setup-dev-server.js", "pm2.config.template.js", ".DS_Store"]
             },
             {
               from: resolve("./server/pm2.config.template.js"),
@@ -93,9 +89,7 @@ module.exports = {
   }),
   chainWebpack: config => {
     // alias
-    config.resolve.alias
-      .set("@", resolve("src"))
-      .set("@assets", resolve("src/assets"));
+    config.resolve.alias.set("@", resolve("src")).set("@assets", resolve("src/assets"));
 
     // reset public/index.html to static/index.html
     config.plugin("html").tap(args => {
