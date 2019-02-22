@@ -1,16 +1,16 @@
 {
-  "name": "vue-cli3-ssr-project",
+  "name": "jvue-cli3",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev:client": "vue-cli-service serve --mode dev",
     "dev:ssr": "cross-env BUILD_TARGET=node NODE_ENV=dev node ./server",
-    "dev:all": "concurrently \"vue-cli-service serve --mode dev --port 8081\" \"npm run dev:ssr\" ",
-    "dev": "cross-env NODE_DEPLOY=dev npm run dev:all",
+    "dev:all": "concurrently 'vue-cli-service serve --mode dev --port 8081' 'yarn dev:ssr' ",
+    "dev": "cross-env NODE_DEPLOY=dev yarn dev:all",
     "build:client": "vue-cli-service build",
     "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",
-    "build:all": "npm run build:client && cross-env NODE_PORT=9080 npm run build:ssr",
-    "build": "cross-env NODE_DEPLOY=prod npm run build:all",
+    "build:all": "yarn build:client && cross-env NODE_PORT=9080 yarn build:ssr",
+    "build": "cross-env NODE_DEPLOY=prod yarn build:all",
     "lint": "vue-cli-service lint",
     "dist": "cross-env NODE_DEPLOY=t1 NODE_ENV=production node ./dist/server"
   },
