@@ -9,10 +9,12 @@ const resolve = file => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
 const isDev = process.env.NODE_ENV && process.env.NODE_ENV.indexOf("dev") > -1;
-
 module.exports = {
   publicPath: deployConfig[`${isDev ? "dev" : "build"}`].assetsPublicPath,
   assetsDir: "static",
+  css: {
+    sourceMap: !isDev && !TARGET_NODE // if enable sourceMap:  fix ssr load Critical CSS throw replace of undefind
+  },
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },
     proxy: deployConfig.dev.proxyTable,
@@ -36,7 +38,7 @@ module.exports = {
           // 不要外置化 webpack 需要处理的依赖模块。
           // 你可以在这里添加更多的文件类型。例如，未处理 *.vue 原始文件，
           // 你还应该将修改 `global`（例如 polyfill）的依赖模块列入白名单
-          whitelist: [/\.css$/]
+          whitelist: [/\.css$/, /\?vue&type=style/]
         })
       : undefined,
     optimization: {
@@ -63,7 +65,11 @@ module.exports = {
               from: resolve("./server"),
               to: resolve("./dist/server"),
               toType: "dir",
-              ignore: ["setup-dev-server.js", "pm2.config.template.js", ".DS_Store"]
+              ignore: [
+                "setup-dev-server.js",
+                "pm2.config.template.js",
+                ".DS_Store"
+              ]
             },
             {
               from: resolve("./server/pm2.config.template.js"),
@@ -89,7 +95,9 @@ module.exports = {
   }),
   chainWebpack: config => {
     // alias
-    config.resolve.alias.set("@", resolve("src")).set("@assets", resolve("src/assets"));
+    config.resolve.alias
+      .set("@", resolve("src"))
+      .set("@assets", resolve("src/assets"));
 
     // reset public/index.html to static/index.html
     config.plugin("html").tap(args => {
@@ -118,12 +126,36 @@ module.exports = {
             const rule = config.module.rule(lang).oneOf(type);
             rule.uses.delete("extract-css-loader");
             // Critical CSS
-            // rule.use('css-context').loader(CssContextLoader).before('css-loader')
+            rule
+              .use("vue-style")
+              .loader("vue-style-loader")
+              .before("css-loader");
           }
         }
         config.plugins.delete("extract-css");
       }
+
+      config.module
+        .rule("vue")
+        .use("cache-loader")
+        .tap(options => {
+          // Change cache directory for server-side
+          options.cacheIdentifier += "-server";
+          options.cacheDirectory += "-server";
+          return options;
+        });
     }
+    config.module
+      .rule("vue")
+      .use("vue-loader")
+      .tap(options => {
+        if (TARGET_NODE) {
+          options.cacheIdentifier += "-server";
+          options.cacheDirectory += "-server";
+        }
+        options.optimizeSSR = TARGET_NODE;
+        return options;
+      });
 
     // fix ssr hot update bug
     if (TARGET_NODE) {
