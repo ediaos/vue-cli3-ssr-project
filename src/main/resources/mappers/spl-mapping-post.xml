@@ -1,0 +1,157 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jvue">
+    <!-- 根据类型获取文章 -->
+    <resultMap id="postMap" type="com.terwergreen.jvue.pojo.Post">
+        <id column="post_id" property="postId"/>
+        <result column="post_finished" property="postFinished"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="post_type" property="postType"/>
+        <result column="post_status" property="postStatus"/>
+        <result column="post_name" property="postSlug"/>
+        <result column="post_title" property="postTitle"/>
+        <result column="post_content" property="postContent"/>
+        <result column="post_date" property="postDate"/>
+        <result column="post_modified" property="postModified"/>
+        <!-- 定义多对一关联信息（每个文章对应一个作者） -->
+        <!-- <association property="sysUser" resultMap="userMap"/> -->
+        <collection property="postMetas" ofType="com.terwergreen.jvue.pojo.PostMeta" select="getPostMeta" column="post_id">
+        </collection>
+    </resultMap>
+    <select id="getPostsByType" parameterType="java.util.Map" resultMap="postMap">
+        SELECT DISTINCT p.post_id,p.post_finished,p.comment_count, p.post_status, p.post_type, p.post_name, p.post_title,p.post_content,p.post_date,p.post_modified,
+        su.user_name,su.nick_name,su.user_profile,su.user_url,su.mobile,su.email,su.status,su.user_desc,su.user_registered,
+        sr.id AS role_id,sr.name AS role_name,sr.cn_name
+        <if test="isHot!=null and isHot==1">
+            ,CAST(if(pm.meta_key='view_count',pm.meta_value,0) AS unsigned)
+        </if>
+        FROM bg_posts p
+        LEFT JOIN bg_postmeta pm ON pm.post_id = p.post_id
+        LEFT JOIN sys_user su ON su.id = p.post_author
+        LEFT JOIN sys_role_user sru on su.id= sru.sys_user_id
+        LEFT JOIN sys_role sr on sru.sys_role_id = sr.id
+        WHERE 1=1
+        <if test="postStatus!=null and postStatus!=''">
+            AND p.post_status = #{postStatus}
+        </if>
+        <if test="postType!=null and postType!=''">
+            AND p.post_type = #{postType}
+        </if>
+        <if test="userId!=null">
+            AND p.post_author = #{userId}
+        </if>
+        <if test="metaKey!=null and metaKey!=''">
+            AND pm.meta_key = #{metaKey}
+        </if>
+        <if test="metaValue!=null and metaValue!=''">
+            AND pm.meta_value = #{metaValue}
+        </if>
+        <if test="search!=null and search!=''">
+            AND ((p.post_title LIKE concat(concat('%',#{search}),'%')) OR (p.post_content LIKE concat(concat('%',#{search}),'%')))
+        </if>
+        <choose>
+            <when test="isHot!=null and isHot==1">
+                ORDER BY CAST(if(pm.meta_key='view_count',pm.meta_value,0) AS unsigned) DESC
+            </when>
+            <otherwise>
+                ORDER BY p.post_modified DESC
+            </otherwise>
+        </choose>
+    </select>
+    <!-- 获取文章属性 -->
+    <select id="getPostMeta" resultType="com.terwergreen.jvue.pojo.PostMeta">
+        SELECT pm.meta_key AS metaKey,ifnull(pm.meta_value, '文章') AS metaValue
+        FROM bg_postmeta pm
+        WHERE pm.post_id = #{post_id}
+    </select>
+    <!-- 根据别名获取单个文章 -->
+    <select id="getPostBySlug" resultMap="postMap">
+        SELECT p.post_id, p.post_name, p.post_type,p.post_status, p.post_title,p.post_content,p.post_date,p.post_modified,p.comment_count
+        FROM bg_posts p
+                 LEFT JOIN bg_postmeta pm ON pm.post_id = p.post_id
+        WHERE p.post_name = #{slug}
+    </select>
+    <!-- 根据ID获取单个文章 -->
+    <select id="getPostById" resultMap="postMap">
+        SELECT p.post_id, p.post_name, p.post_type,p.post_status, p.post_title,p.post_content,p.post_date,p.post_modified,p.comment_count
+        FROM bg_posts p
+                 LEFT JOIN bg_postmeta pm ON pm.post_id = p.post_id
+        WHERE p.post_id = #{postId}
+    </select>
+    <!-- 新增文章 -->
+    <insert id="insertPost" useGeneratedKeys="true" keyProperty="postId" keyColumn="post_id" parameterType="com.terwergreen.jvue.pojo.Post">
+        INSERT INTO bg_posts(post_type,post_author,post_date,post_modified,
+        <if test="postStatus!=null and postStatus!=''">
+            post_status,
+        </if>
+        <if test="postTitle!=null and postTitle!=''">
+            post_title,
+        </if>
+        <if test="postSlug!=null and postSlug!=''">
+            post_name,
+        </if>
+        post_content)
+        VALUES
+        (#{postType},#{postAuthor},#{postDate},current_timestamp,
+        <if test="postStatus!=null and postStatus!=''">
+            #{postStatus},
+        </if>
+        <if test="postTitle!=null and postTitle!=''">
+            #{postTitle},
+        </if>
+        <if test="postSlug!=null and postSlug!=''">
+            #{postSlug},
+        </if>
+        #{postRawContent})
+    </insert>
+    <update id="updatePost" parameterType="com.terwergreen.jvue.pojo.Post">
+        UPDATE bg_posts
+        SET
+        <if test="postType!=null and postType!=''">
+            post_type = #{postType},
+        </if>
+        <if test="postStatus!=null and postStatus!=''">
+            post_status = #{postStatus},
+        </if>
+        <if test="postTitle!=null and postTitle!=''">
+            post_title = #{postTitle},
+        </if>
+        <if test="postRawContent!=null and postRawContent!=''">
+            post_content = #{postRawContent},
+        </if>
+        <if test="postDate!=null">
+            post_date = #{postDate},
+        </if>
+        <if test="postSlug!=null and postSlug!=''">
+            post_name = #{postSlug},
+        </if>
+        post_modified = current_timestamp
+        WHERE post_id = #{postId}
+    </update>
+    <!-- 根据别名删除文章 -->
+    <delete id="deletePostBySlug">
+        DELETE FROM bg_posts WHERE post_name = #{postSlug}
+    </delete>
+    <!-- 根据ID删除文章 -->
+    <delete id="deletePostById">
+        DELETE FROM bg_posts WHERE post_id = #{postId}
+    </delete>
+    <!--新增或者修改文章属性 -->
+    <insert id="saveOrUpdatePostMeta" parameterType="com.terwergreen.jvue.pojo.PostMeta">
+        <selectKey keyProperty="count" resultType="int" order="BEFORE">
+            SELECT count(*) FROM bg_postmeta WHERE post_id=#{postId} AND meta_key=#{metaKey}
+        </selectKey>
+        <!-- 如果大于0则更新 -->
+        <if test="count>0">
+            UPDATE bg_postmeta SET meta_value=#{metaValue}
+            WHERE post_id=#{postId} AND meta_key=#{metaKey}
+        </if>
+        <!-- 如果等于0则保存 -->
+        <if test="count==0">
+            INSERT INTO bg_postmeta(post_id,meta_key,meta_value)
+            VALUES (#{postId},#{metaKey},#{metaValue})
+        </if>
+    </insert>
+</mapper>

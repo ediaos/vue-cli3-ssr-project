@@ -1,21 +1,29 @@
-.DS_Store
-node_modules
-/dist
+/target/
+!.mvn/wrapper/maven-wrapper.jar
 
-# local env files
-.env.local
-.env.*.local
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# Log files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Editor directories and files
+### IntelliJ IDEA ###
 .idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw*
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+/build/
+/logs/
+
+### Secret ###
+application-prod.properties

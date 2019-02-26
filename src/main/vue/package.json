@@ -1,0 +1,51 @@
+{
+  "name": "jvue-cli3",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:client": "vue-cli-service serve --mode dev",
+    "dev:ssr": "cross-env BUILD_TARGET=node NODE_ENV=dev node ./server",
+    "dev:all": "concurrently 'vue-cli-service serve --mode dev --port 8081' 'yarn dev:ssr' ",
+    "dev": "cross-env NODE_DEPLOY=dev yarn dev:all",
+    "build:client": "vue-cli-service build",
+    "build:ssr": "cross-env BUILD_TARGET=node vue-cli-service build --no-clean",
+    "build:all": "yarn build:client && cross-env NODE_PORT=9080 yarn build:ssr",
+    "build": "cross-env NODE_DEPLOY=prod yarn build:all",
+    "lint": "vue-cli-service lint",
+    "dist": "cross-env NODE_DEPLOY=t1 NODE_ENV=production node ./dist/server"
+  },
+  "dependencies": {
+    "axios": "0.18.0",
+    "js-cookie": "2.2.0",
+    "koa": "2.7.0",
+    "koa-cookie": "1.0.0",
+    "koa-morgan": "1.0.1",
+    "koa-mount": "4.0.0",
+    "koa-static": "5.0.0",
+    "vant": "1.6.5",
+    "vue": "2.6.7",
+    "vue-router": "3.0.2",
+    "vue-server-renderer": "2.6.7",
+    "vuex": "3.1.0",
+    "vuex-router-sync": "5.0.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "3.4.1",
+    "@vue/cli-plugin-eslint": "3.4.1",
+    "@vue/cli-service": "3.4.1",
+    "@vue/eslint-config-prettier": "4.0.1",
+    "babel-eslint": "10.0.1",
+    "chalk": "2.4.2",
+    "concurrently": "4.1.0",
+    "cross-env": "5.2.0",
+    "eslint": "5.14.1",
+    "eslint-plugin-vue": "5.2.2",
+    "koa-proxies": "0.8.1",
+    "lodash.merge": "4.6.1",
+    "lru-cache": "5.1.1",
+    "node-sass": "4.11.0",
+    "sass-loader": "7.1.0",
+    "vue-template-compiler": "2.6.7",
+    "webpack-node-externals": "1.7.2"
+  }
+}

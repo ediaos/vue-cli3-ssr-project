@@ -1,0 +1,35 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jvue">
+    <!-- 获取配置项 -->
+    <select id="getOptionByGroup" resultType="java.util.Map">
+        select option_name as optionName,option_value as optionValue
+        from bg_options
+        where option_group = #{optionGroup}
+        <if test="optionName != null and optionName != ''">
+          and option_name = #{optionName}
+        </if>
+    </select>
+    <!-- 获取站点配置 -->
+    <select id="getSiteConfig" resultType="com.terwergreen.jvue.pojo.SiteConfig">
+        select max(case option_name when 'domain' then option_value else '' end ) `domain`,
+            max(case option_name when 'weburl' then option_value else '' end) weburl,
+            max(case option_name when 'webtheme' then option_value else '' end) webtheme,
+            max(case option_name when 'webname' then option_value else '' end) webname,
+            max(case option_name when 'webslogen' then option_value else '' end) webslogen,
+            max(case option_name when 'keywords' then option_value else '' end) keywords,
+            max(case option_name when 'description' then option_value else '' end) description,
+            max(case option_name when 'beianinfo' then option_value else '' end) beianinfo,
+            max(case option_name when 'debug' then option_value else '' end) debug,
+            max(case option_name when 'adminpath' then option_value else '' end) adminpath
+        from bg_options
+        where option_group = 'siteConfig'
+    </select>
+    <!-- 更新配置项 -->
+    <update id="updateOptionByGroup">
+        update bg_options set option_value = #{optionValue}
+        where option_name = #{optionName} and option_group = #{optionGroup}
+    </update>
+</mapper>

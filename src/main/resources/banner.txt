@@ -1,0 +1,8 @@
+${AnsiColor.MAGENTA}
+  _______
+ |__   __|
+    | |  ___  _ __ __      __ ___  _ __
+    | | / _ \| '__|\ \ /\ / // _ \| '__|
+    | ||  __/| |    \ V  V /|  __/| |
+    |_| \___||_|     \_/\_/  \___||_|
+${AnsiColor.YELLOW}:: ${AnsiColor.GREEN}${application.title} ::            ${AnsiColor.BRIGHT_RED}(${application.formatted-version})

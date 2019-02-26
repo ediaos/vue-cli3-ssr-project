@@ -1,46 +1,117 @@
-# jvue-cli3
+<p align="center">
+    <a href="https://vuejs.org" target="_blank" rel="noopener noreferrer"><img width="100" height="117" src="slogan/vue.png" alt="Vue logo"></a>  
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.oracle.com/technetwork/java/javase/downloads/index.html" target="_blank" rel="noopener noreferrer"><img width="100" height="117" src="slogan/java.png" alt="Java logo"></a>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://github.com/eclipsesource/J2V8" target="_blank" rel="noopener noreferrer"><img width="100" height="117" src="slogan/j2v8.png" alt="J2V8 logo"></a>
+</p>
 
-基于 Vue-Cli3 改造的 SSR 服务端渲染项目，目的是改造成可用于工程上
+<p align="center">
+  <a href="https://www.oracle.com/technetwork/java/javase/downloads/index.html"><img src="https://img.shields.io/badge/jdk-1.8.0_191-orange.svg" alt="Java logo"></a>
+  <a href="http://maven.apache.org/"><img src="https://img.shields.io/badge/maven-3.6.0-blue.svg" alt="Maven logo"></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-v10.15.1-green.svg" alt="Version"></a>
+  <a href="https://www.npmjs.com/"><img src="https://img.shields.io/badge/npm-v6.4.1-blue.svg" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/vue"><img src="https://img.shields.io/badge/vue-2.6.6-brightgreen.svg" alt="Version"></a>
+  <a href="https://gcc.gnu.org/"><img src="https://img.shields.io/badge/gcc-7.3.0-blue.svg" alt="GCC logo"></a>
+  <a href="https://gcc.gnu.org/"><img src="https://img.shields.io/badge/g++-7.3.0-blue.svg" alt="G++ logo"></a>
+  <a href="https://github.com/jvuesource/J2V8"><img src="https://img.shields.io/badge/j2v8-4.3.0-blue.svg" alt="J2V8 Logo"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/npm/l/vue.svg" alt="License"></a>
+</p>
 
-- 基于 Cli3 进行改造的前后端渲染项目
-- 支持通过配置决定 Page 是否服务端渲染
-- 使用 KOA 或者 Spring Boot 作为 server 端框架
-- PM2 配置支持
-- 支持前端渲染基于路由变更后再请求数据，用户体验更好
-- 优化基于 cli3 的环境配置，改为 config 文件中配置，包括 cdn 地址支持
-- 优化 dev 开发 ssr，通过双启动(ssr-server & client-dev-server)方式，实现前后端 dev 开发无感知,解决方案更加优雅
-- SEO 的支持，支持 tkd 以及 head 附加
+# Introduction
+## jvue-cli3
+Next light-weight,responsive project 
+With Vue,webpack,Vue Cli 3,Spring Boot and eclipse j2v8 Script engine for server-side-rendering
 
-## Project setup
+# Build setup
 
+## Build Vue
+
+```bash
+cd src/main/vue && npm i -g yarn && yarn
 ```
 
+ To get started:
+
+    yarn run dev
+
+  To build & start for production:
+
+    yarn build
+    yarn start
+
+  To build for ssr only
+
+    yarn build:ssr
+
+  To test:
+
+    yarn test
+
+## Go back to root forder
+
+```bash
+cd ../../../../jvue
 ```
 
-### Compiles and hot-reloads for development
+## Install j2v8
 
-```
-yarn dev
-```
-
-### Compiles and minifies for production
-
-```
-yarn build
+### linux
+```bash
+mvn install:install-file -Dfile=libs/j2v8_linux_x86_64-4.8.0.jar
 ```
 
-### Run your tests
+or
 
-```
-yarn test
-```
-
-### Lints and fixes files
-
-```
-yarn lint
+```bash
+mvn install:install-file -Dfile=libs/j2v8_linux_x86_64-4.8.3.jar
 ```
 
-### Customize configuration
+### windows
+```bash
+mvn install:install-file -Dfile=libs/j2v8_win32_x86_64-4.8.3.jar -Dpackaging=jar
+```
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# Run CLI
+
+## linux
+```bash
+mvn -f pom_linux_x86_x64.xml clean package exec:java
+```
+### windows
+```bash
+mvn clean package exec:java
+```
+
+## Run Spring Boot
+
+### linux
+```bsah
+mvn -f pom_linux_x86_x64.xml clean package spring-boot:run
+```
+### windows
+```bsah
+mvn clean package spring-boot:run
+```
+
+## Start Tomcat
+
+```
+# 切换到root用户
+su
+cd /home/soft/apache-tomcat-9.0.16/bin && ./catalina.sh run
+```
+
+# Structure
+
+The whole project is a ``Java Spring Boot Maven`` structure,the ``src/main/vue`` is a complete ``Vue`` Project With ``webpack`` structure
+
+When build finish,all files merged into ``target/ROOT.war``
+
+Have fun and enjoy!
+
+# Contribute
+
+You can contribute simplely by create a pull request for me
+
+For detailed explanation on how things work, please visit [author's blog](http://www.terwergreen.com).
