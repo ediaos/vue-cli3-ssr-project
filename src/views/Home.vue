@@ -16,6 +16,7 @@
 <script>
 import { mapState } from "vuex";
 import TopicItem from "../components/TopicItem";
+import updateTdk from "../utils/tdk";
 export default {
   name: "home",
   components: { TopicItem },
@@ -58,6 +59,7 @@ export default {
         .dispatch("FETCH_TOPICS_LIST", { cookies })
         .finally(() => {
           this.$loading(false);
+          updateTdk.call(this);
         });
     },
     // fetchData callback on mounted

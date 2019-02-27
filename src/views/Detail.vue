@@ -13,6 +13,7 @@
 </template>
 <script>
 import { mapState } from "vuex";
+import updateTdk from "../utils/tdk";
 export default {
   name: "Detail",
   data() {
@@ -60,6 +61,7 @@ export default {
         })
         .finally(() => {
           this.$loading(false);
+          updateTdk.call(this);
         });
     },
     // fetchData callback on mounted
