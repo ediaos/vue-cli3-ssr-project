@@ -12,6 +12,21 @@ Vue.config.productionTip = true;
 import Vant from "vant";
 import "vant/lib/index.css";
 Vue.use(Vant);
+// global loading
+Vue.prototype.$loading = isLoading => {
+  if (isLoading) {
+    Vue.prototype.$toast.loading({
+      mask: true,
+      message: "加载中...",
+      overlayStyle: {
+        backgroundColor: "rgba(0, 0, 0, 0.1)"
+      },
+      duration: 0
+    });
+  } else {
+    Vue.prototype.$toast.clear();
+  }
+};
 
 export function createApp() {
   const router = createRouter();
@@ -25,4 +40,18 @@ export function createApp() {
     render: h => h(App)
   });
   return { app, router, store };
+}
+
+// promise.finally Polyfill
+if (!Promise.prototype.finally) {
+  Promise.prototype.finally = function(callback) {
+    let P = this.constructor;
+    return this.then(
+      value => P.resolve(callback()).then(() => value),
+      reason =>
+        P.resolve(callback()).then(() => {
+          throw reason;
+        })
+    );
+  };
 }

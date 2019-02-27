@@ -16,7 +16,6 @@
 <script>
 import { mapState } from "vuex";
 import TopicItem from "../components/TopicItem";
-// @ is an alias to /src
 export default {
   name: "home",
   components: { TopicItem },
@@ -38,21 +37,36 @@ export default {
       ssrHeadAddInfo: `<link rel="canonical" href="https://www.github.com">`
     };
   },
-  // eslint-disable-next-line
-  asyncData({ store, route: { params, query, fullPath }, cookies, userAgent }) {
-    return store.dispatch("FETCH_TOPICS_LIST", { cookies });
+  serverPrefetch() {
+    return this.fetchData();
   },
   mounted() {
     this.isMounted = true;
-    // 注册数据回调处理,仅限mounted后面生命周期中使用
-    this.dataPromise.then(() => {
+    const alreadyIncremented = !!this.topicsList;
+    if (!alreadyIncremented) {
+      this.fetchData().then(this.fetchDataMounted());
+    } else {
+      this.fetchDataMounted();
+    }
+  },
+  methods: {
+    // fetchData for client and server render
+    fetchData() {
+      this.isMounted && this.$loading(true);
+      const cookies = this.$ssrContext && this.$ssrContext.cookies;
+      return this.$store
+        .dispatch("FETCH_TOPICS_LIST", { cookies })
+        .finally(() => {
+          this.$loading(false);
+        });
+    },
+    // fetchData callback on mounted
+    fetchDataMounted() {
       this.topicsList &&
         this.topicsList.forEach(item => {
           item.create_at = new Date(item.create_at).toDateString();
         });
-    });
-  },
-  methods: {
+    },
     navDetail(detail) {
       this.$router.push({ path: `/detail/${detail.id}` });
     }

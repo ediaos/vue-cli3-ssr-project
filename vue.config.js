@@ -106,15 +106,6 @@ module.exports = {
     });
 
     if (TARGET_NODE) {
-      // 优化ssr loader
-      config.module
-        .rule("vue")
-        .use("vue-loader")
-        .tap(args => {
-          args.optimizeSSR = true;
-          return args;
-        });
-
       // fix ssr bug: document not found -- https://github.com/Akryum/vue-cli-plugin-ssr/blob/master/lib/webpack.js
       const isExtracting = config.plugins.has("extract-css");
       if (isExtracting) {
