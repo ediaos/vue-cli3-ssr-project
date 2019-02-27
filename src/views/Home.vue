@@ -52,7 +52,7 @@ export default {
   methods: {
     // fetchData for client and server render
     fetchData() {
-      this.isMounted && this.$loading(true);
+      this.$loading(true);
       const cookies = this.$ssrContext && this.$ssrContext.cookies;
       return this.$store
         .dispatch("FETCH_TOPICS_LIST", { cookies })

@@ -53,7 +53,7 @@ export default {
   methods: {
     // fetchData for client and server render
     fetchData() {
-      this.isMounted && this.$loading(true);
+      this.$loading(true);
       return this.$store
         .dispatch("FETCH_TOPIC_DETAIL", {
           id: this.$route.params.id
