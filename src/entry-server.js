@@ -9,53 +9,21 @@ export default context => {
   return new Promise((resolve, reject) => {
     const beginTime = Date.now();
     const { app, router, store } = createApp();
-    const { url, cookies, userAgent } = context;
-
-    const { fullPath } = router.resolve(url).route;
-    if (fullPath !== url) {
-      /* eslint-disable-next-line */
-      return reject({ url: fullPath });
-    }
-
     // set router's location
-    router.push(url);
-    // wait until router has resolved possible async hooks
+    router.push(context.url);
     router.onReady(() => {
-      const matchedComponents = router.getMatchedComponents();
-      // no matched routes
-      if (!matchedComponents.length) {
+      // This `rendered` hook is called when the app has finished rendering
+      context.rendered = () => {
+        // After the app is rendered, our store is now
+        // filled with the state from our components.
+        // When we attach the state to the context, and the `template` option
+        // is used for the renderer, the state will automatically be
+        // serialized and injected into the HTML as `window.__INITIAL_STATE__`.
+        context.state = store.state;
         /* eslint-disable-next-line */
-        return reject({ code: 404 });
-      }
-      // Call fetchData hooks on components matched by the route.
-      // A preFetch hook dispatches a store action and returns a Promise,
-      // which is resolved when the action is complete and store state has been
-      // updated.
-      Promise.all(
-        matchedComponents.map(
-          ({ asyncData }) =>
-            asyncData &&
-            asyncData({
-              store,
-              route: router.currentRoute,
-              cookies,
-              userAgent
-            })
-        )
-      )
-        .then(() => {
-          /* eslint-disable-next-line */
-          console.log(`[DATE] data pre-fetch: ${Date.now() - beginTime}ms url=${fullPath}`);
-          // After all preFetch hooks are resolved, our store is now
-          // filled with the state needed to render the app.
-          // Expose the state on the render context, and let the request handler
-          // inline the state in the HTML response. This allows the client-side
-          // store to pick-up the server-side state without having to duplicate
-          // the initial data fetching on the client.
-          context.state = store.state;
-          resolve(app);
-        })
-        .catch(reject);
+        console.log(`[DATE] data pre-fetch: ${Date.now() - beginTime}ms url=${context.url}`);
+      };
+      resolve(app);
     }, reject);
   });
 };
