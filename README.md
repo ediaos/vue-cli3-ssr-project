@@ -12,6 +12,14 @@
 - 优化 dev 开发 ssr，通过双启动(ssr-server & client-dev-server)方式，实现前后端 dev 开发无感知,解决方案更加优雅
 - SEO 的支持，支持 tkd 以及 head 附加
 
+## v0.3.1
+
+- fix tdk bug
+
+## v0.3.0
+
+- add serverPrefetch for ssr , rm async data
+
 ## v0.2.1
 
 - add critical css to ssr
