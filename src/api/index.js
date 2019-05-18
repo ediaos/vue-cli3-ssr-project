@@ -1,6 +1,7 @@
 import axios from "axios";
 const TARGET_SERVER = process.env.VUE_ENV === "server";
-const cnodeBaseUrl = TARGET_SERVER ? process.env.config.CNODE_HOST : "/feapi";
+// FOR PROXY TEST:  const cnodeBaseUrl = TARGET_SERVER ? process.env.config.CNODE_HOST : "/feapi";
+const cnodeBaseUrl = process.env.config.CNODE_HOST;
 export function fetchTopics({ cookies }) {
   return axios.get(cnodeBaseUrl + "/api/v1/topics", {
     headers: getCommonHeader({ cookies })

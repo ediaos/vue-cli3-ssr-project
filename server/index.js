@@ -27,7 +27,7 @@ app.use(cookie());
 
 // 获取render
 let renderer;
-setupServer(app, (bundle, options) => {
+setupServer.setupServer(app, (bundle, options) => {
   renderer = createBundleRenderer(
     bundle,
     Object.assign(options, {
@@ -94,8 +94,7 @@ app.use(async (ctx, next) => {
     ctx.body = spaTemplate;
   }
 });
-
-app
+const server = app
   .listen(PORT)
   .on("listening", () => {
     console.log(`server started at localhost:${PORT}`);
@@ -103,3 +102,7 @@ app
   .on("error", err => {
     console.log("---server error---", err);
   });
+
+if (setupServer.setupAppServer) {
+  setupServer.setupAppServer(server);
+}

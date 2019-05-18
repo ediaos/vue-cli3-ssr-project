@@ -69,11 +69,23 @@ function serverLog() {
   );
   console.log();
 }
-
-module.exports = async function setupServer(app, createRenderer) {
+async function setupServer(app, createRenderer) {
   devMiddleWare(app);
   renderer = createRenderer;
+}
+module.exports = {
+  setupServer,
+  setupAppServer
 };
+
+// FIX DEV SOCKET BUG: WebSocket failed: Connection closed before receiving a handshake response And dev Http response closed while proxying
+function setupAppServer(appServer) {
+  appServer.on("upgrade", function(req, socket, head) {
+    proxy.proxy.ws(req, socket, head, {
+      target: "ws://localhost:8081"
+    });
+  });
+}
 
 function devMiddleWare(app) {
   // 接口代理
