@@ -3,16 +3,23 @@ const VueSSRClientPlugin = require("vue-server-renderer/client-plugin");
 const nodeExternals = require("webpack-node-externals");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const deployConfig = require("./config");
 const path = require("path");
 const resolve = file => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
 const isDev = process.env.NODE_ENV && process.env.NODE_ENV.indexOf("dev") > -1;
+class ServerMiniCssExtractPlugin extends MiniCssExtractPlugin {
+  getCssChunkObject(mainChunk) {
+    return {};
+  }
+}
 module.exports = {
   publicPath: deployConfig[`${isDev ? "dev" : "build"}`].assetsPublicPath,
   assetsDir: "static",
   css: {
+    extract: !isDev,
     sourceMap: !isDev && !TARGET_NODE // if enable sourceMap:  fix ssr load Critical CSS throw replace of undefind
   },
   devServer: {
@@ -46,6 +53,7 @@ module.exports = {
     },
     plugins: [
       TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin(),
+      new MiniCssExtractPlugin(),
       new webpack.DefinePlugin({
         "process.env.VUE_ENV": `"${target}"`,
         "process.env.NODE_DEPLOY": `"${process.env.NODE_DEPLOY}"`,
@@ -97,7 +105,11 @@ module.exports = {
     // alias
     config.resolve.alias
       .set("@", resolve("src"))
-      .set("@assets", resolve("src/assets"));
+      .set("api", resolve("src/api"))
+      .set("styles", resolve("src/assets/styles"))
+      .set("images", resolve("src/assets/images"))
+      .set("views", resolve("src/views"))
+      .set("components", resolve("src/components"));
 
     // reset public/index.html to static/index.html
     config.plugin("html").tap(args => {
@@ -110,19 +122,47 @@ module.exports = {
       const isExtracting = config.plugins.has("extract-css");
       if (isExtracting) {
         // Remove extract
-        const langs = ["css", "postcss", "scss", "sass", "less", "stylus"];
-        const types = ["vue-modules", "vue", "normal-modules", "normal"];
-        for (const lang of langs) {
-          for (const type of types) {
-            const rule = config.module.rule(lang).oneOf(type);
-            rule.uses.delete("extract-css-loader");
-            // Critical CSS
-            rule
-              .use("vue-style")
-              .loader("vue-style-loader")
-              .before("css-loader");
-          }
-        }
+        // const langs = ["css", "postcss", "scss", "sass", "less", "stylus"];
+        // const types = ["vue-modules", "vue", "normal-modules", "normal"];
+        // for (const lang of langs) {
+        //   for (const type of types) {
+        //     const rule = config.module.rule(lang).oneOf(type);
+        //     rule.uses.delete("extract-css-loader");
+        //     // Critical CSS
+        //     rule
+        //       .use("vue-style")
+        //       .loader("vue-style-loader")
+        //       .before("css-loader/locals");
+        //   }
+        // }
+
+        config.module
+          .rule("css")
+          .test(/\.css$/)
+          .use(ServerMiniCssExtractPlugin.loader)
+          .loader("vue-style-loader")
+          .before("css-loader")
+          .options({
+            importLoaders: 1,
+            modules: true,
+            localIdentName: "[name]__[local]--[hash:base64:5]",
+            sourceMap: true
+          })
+          .end();
+
+        // config.module
+        //   .rule("css")
+        //   .test(/\.css$/)
+        //   .use("vue-style-loader")
+        //   .loader("css-loader/locals");
+        //
+        // config.module
+        //   .rule("scss")
+        //   .test(/\.scss$/)
+        //   .use("vue-style")
+        //   .loader("css-loader/locals")
+        //   .before("sass-loader");
+
         config.plugins.delete("extract-css");
       }
 
@@ -157,7 +197,7 @@ module.exports = {
 
 // deploy config converter
 function getDeployConfigDefine() {
-  let config = {};
+  const config = {};
   Object.keys(deployConfig.env).forEach(function(key) {
     config[key] = `"${deployConfig.env[key]}"`;
   });
