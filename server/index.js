@@ -8,7 +8,7 @@ const LRU = require("lru-cache");
 const morgan = require("koa-morgan");
 const resolve = file => path.resolve(__dirname, file);
 const isServerRenderPage = require("./ssr-page-config");
-const PORT = process.env.NODE_PORT ? parseInt(process.env.NODE_PORT) : 8080;
+const PORT = process.env.NODE_PORT ? parseInt(process.env.NODE_PORT) : 8082;
 
 const isDev = process.env.NODE_ENV === "dev";
 const template = fs.readFileSync(resolve("./index.template.html"), "utf-8");
@@ -16,6 +16,19 @@ const spaTemplate = fs.readFileSync(
   resolve(`${isDev ? "../static/index.html" : "../index.html"}`),
   "utf-8"
 );
+
+// 这里是偷懒的做法
+const { JSDOM } = require("jsdom"); // document undefined
+const dom = new JSDOM('<!DOCTYPE html><html lang="zh"><body></body></html>', {
+  url: "http://localhost:8088"
+});
+if (typeof window === "undefined") {
+  global.window = dom.window;
+  global.document = window.document;
+  global.navigator = window.navigator;
+  global.localStorage = window.localStorage;
+}
+
 const { createBundleRenderer } = require("vue-server-renderer");
 const setupServer = require(`${
   isDev ? "./setup-dev-server" : "./setup-prod-server"
