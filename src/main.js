@@ -9,18 +9,23 @@ Vue.config.productionTip = true;
 
 // for using vant components
 import Vant from "vant";
-import "vant/lib/index.css";
 Vue.use(Vant);
+
+// import "vant/lib/index.css";
+if (process.env.BUILD_TARGET !== "node") {
+  require("vant/lib/index.css");
+}
+
 // global loading
-Vue.prototype.$loading = isLoading => {
+Vue.prototype.$loading = (isLoading) => {
   if (isLoading) {
     Vue.prototype.$toast.loading({
       mask: true,
       message: "加载中...",
       overlayStyle: {
-        backgroundColor: "rgba(0, 0, 0, 0.1)"
+        backgroundColor: "rgba(0, 0, 0, 0.1)",
       },
-      duration: 0
+      duration: 0,
     });
   } else {
     Vue.prototype.$toast.clear();
@@ -36,7 +41,7 @@ export function createApp() {
   const app = new Vue({
     router,
     store,
-    render: h => h(App)
+    render: (h) => h(App),
   });
   return { app, router, store };
 }
@@ -46,8 +51,8 @@ if (!Promise.prototype.finally) {
   Promise.prototype.finally = function(callback) {
     let P = this.constructor;
     return this.then(
-      value => P.resolve(callback()).then(() => value),
-      reason =>
+      (value) => P.resolve(callback()).then(() => value),
+      (reason) =>
         P.resolve(callback()).then(() => {
           throw reason;
         })

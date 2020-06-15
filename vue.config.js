@@ -6,35 +6,36 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const deployConfig = require("./config");
 const path = require("path");
-const resolve = file => path.resolve(__dirname, file);
+const resolve = (file) => path.resolve(__dirname, file);
 const TARGET_NODE = process.env.BUILD_TARGET === "node";
 const target = TARGET_NODE ? "server" : "client";
 const isDev = process.env.NODE_ENV && process.env.NODE_ENV.indexOf("dev") > -1;
-class ServerMiniCssExtractPlugin extends MiniCssExtractPlugin {
-  getCssChunkObject(mainChunk) {
-    return {};
-  }
-}
+// class ServerMiniCssExtractPlugin extends MiniCssExtractPlugin {
+//   getCssChunkObject(mainChunk) {
+//     return {};
+//   }
+// }
 module.exports = {
   publicPath: deployConfig[`${isDev ? "dev" : "build"}`].assetsPublicPath,
   assetsDir: "static",
-  css: {
-    extract: !isDev,
-    sourceMap: !isDev && !TARGET_NODE // if enable sourceMap:  fix ssr load Critical CSS throw replace of undefind
-  },
+  productionSourceMap: false, // diable mapfile . 如果需要开启，vue-ssr v2.6.7 需要把css的map一起开启才行，否则会报错
+  // css: {
+  //   // extract: !isDev,
+  //   sourceMap: !isDev && !TARGET_NODE, // if enable sourceMap:  fix ssr load Critical CSS throw replace of undefind
+  // },
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },
     proxy: deployConfig.dev.proxyTable,
-    disableHostCheck: true //  新增该配置项 fix ssr console error
+    disableHostCheck: true, //  新增该配置项 fix ssr console error
   },
   transpileDependencies: [],
   // eslint-disable-next-line
-  configureWebpack: config => ({
+  configureWebpack: (config) => ({
     entry: `./src/entry-${target}.js`,
     target: TARGET_NODE ? "node" : "web",
     node: TARGET_NODE ? undefined : false,
     output: {
-      libraryTarget: TARGET_NODE ? "commonjs2" : undefined
+      libraryTarget: TARGET_NODE ? "commonjs2" : undefined,
     },
     // https://webpack.js.org/configuration/externals/#function
     // https://github.com/liady/webpack-node-externals
@@ -45,11 +46,23 @@ module.exports = {
           // 不要外置化 webpack 需要处理的依赖模块。
           // 你可以在这里添加更多的文件类型。例如，未处理 *.vue 原始文件，
           // 你还应该将修改 `global`（例如 polyfill）的依赖模块列入白名单
-          whitelist: [/\.css$/, /\?vue&type=style/]
+          whitelist: [/\.css$/, /\?vue&type=style/],
         })
       : undefined,
     optimization: {
-      splitChunks: TARGET_NODE ? false : undefined
+      splitChunks: TARGET_NODE
+        ? false
+        : {
+            chunks: "all",
+            cacheGroups: {
+              libs: {
+                name: "chunk-vendors",
+                test: /[\/]node_modules[\/]/,
+                priority: 10,
+                chunks: "initial", // 只打包初始时依赖的第三方
+              },
+            },
+          },
     },
     plugins: [
       TARGET_NODE ? new VueSSRServerPlugin() : new VueSSRClientPlugin(),
@@ -57,8 +70,9 @@ module.exports = {
       new webpack.DefinePlugin({
         "process.env.VUE_ENV": `"${target}"`,
         "process.env.NODE_DEPLOY": `"${process.env.NODE_DEPLOY}"`,
-        "process.env.config": getDeployConfigDefine()
-      })
+        "process.env.BUILD_TARGET": `"${process.env.BUILD_TARGET}"`,
+        "process.env.config": getDeployConfigDefine(),
+      }),
     ].concat(
       isDev
         ? []
@@ -67,7 +81,7 @@ module.exports = {
               from: resolve("./static"),
               to: resolve("./dist/static"),
               toType: "dir",
-              ignore: ["index.html", ".DS_Store"]
+              ignore: ["index.html", ".DS_Store"],
             },
             {
               from: resolve("./server"),
@@ -76,8 +90,8 @@ module.exports = {
               ignore: [
                 "setup-dev-server.js",
                 "pm2.config.template.js",
-                ".DS_Store"
-              ]
+                ".DS_Store",
+              ],
             },
             {
               from: resolve("./server/pm2.config.template.js"),
@@ -86,22 +100,23 @@ module.exports = {
                 return content
                   .toString()
                   .replace("NODE_ENV_VALUE", process.env.NODE_ENV)
+                  .replace("BUILD_TARGET", process.env.BUILD_TARGET)
                   .replace("NODE_PORT_VALUE", process.env.NODE_PORT)
                   .replace("NODE_DEPLOY_VALUE", process.env.NODE_DEPLOY);
-              }
+              },
             },
             {
               from: resolve("./package.json"),
-              to: resolve("./dist")
+              to: resolve("./dist"),
             },
             {
               from: resolve("./package-lock.json"),
-              to: resolve("./dist")
-            }
+              to: resolve("./dist"),
+            },
           ])
-    )
+    ),
   }),
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     // alias
     config.resolve.alias
       .set("@", resolve("src"))
@@ -112,7 +127,7 @@ module.exports = {
       .set("components", resolve("src/components"));
 
     // reset public/index.html to static/index.html
-    config.plugin("html").tap(args => {
+    config.plugin("html").tap((args) => {
       args[0].template = resolve("./static/index.html");
       return args;
     });
@@ -122,64 +137,37 @@ module.exports = {
       const isExtracting = config.plugins.has("extract-css");
       if (isExtracting) {
         // Remove extract
-        // const langs = ["css", "postcss", "scss", "sass", "less", "stylus"];
-        // const types = ["vue-modules", "vue", "normal-modules", "normal"];
-        // for (const lang of langs) {
-        //   for (const type of types) {
-        //     const rule = config.module.rule(lang).oneOf(type);
-        //     rule.uses.delete("extract-css-loader");
-        //     // Critical CSS
-        //     rule
-        //       .use("vue-style")
-        //       .loader("vue-style-loader")
-        //       .before("css-loader/locals");
-        //   }
-        // }
-
-        config.module
-          .rule("css")
-          .test(/\.css$/)
-          .use(ServerMiniCssExtractPlugin.loader)
-          .loader("vue-style-loader")
-          .before("css-loader")
-          .options({
-            importLoaders: 1,
-            modules: true,
-            localIdentName: "[name]__[local]--[hash:base64:5]",
-            sourceMap: true
-          })
-          .end();
-
-        // config.module
-        //   .rule("css")
-        //   .test(/\.css$/)
-        //   .use("vue-style-loader")
-        //   .loader("css-loader/locals");
-        //
-        // config.module
-        //   .rule("scss")
-        //   .test(/\.scss$/)
-        //   .use("vue-style")
-        //   .loader("css-loader/locals")
-        //   .before("sass-loader");
-
+        const langs = ["css", "postcss", "scss", "sass", "less", "stylus"];
+        const types = ["vue-modules", "vue", "normal-modules", "normal"];
+        for (const lang of langs) {
+          for (const type of types) {
+            const rule = config.module.rule(lang).oneOf(type);
+            rule.uses.delete("extract-css-loader");
+            // Critical CSS
+            rule
+              .use("vue-style")
+              .loader("vue-style-loader")
+              .before("css-loader");
+          }
+        }
         config.plugins.delete("extract-css");
       }
 
       config.module
         .rule("vue")
         .use("cache-loader")
-        .tap(options => {
+        .tap((options) => {
           // Change cache directory for server-side
           options.cacheIdentifier += "-server";
           options.cacheDirectory += "-server";
           return options;
         });
     }
+
     config.module
       .rule("vue")
       .use("vue-loader")
-      .tap(options => {
+      .tap((options) => {
         if (TARGET_NODE) {
           options.cacheIdentifier += "-server";
           options.cacheDirectory += "-server";
@@ -192,7 +180,7 @@ module.exports = {
     if (TARGET_NODE) {
       config.plugins.delete("hmr");
     }
-  }
+  },
 };
 
 // deploy config converter

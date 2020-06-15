@@ -6,9 +6,9 @@ const cookie = require("koa-cookie").default;
 const mount = require("koa-mount");
 const LRU = require("lru-cache");
 const morgan = require("koa-morgan");
-const resolve = file => path.resolve(__dirname, file);
+const resolve = (file) => path.resolve(__dirname, file);
 const isServerRenderPage = require("./ssr-page-config");
-const PORT = process.env.NODE_PORT ? parseInt(process.env.NODE_PORT) : 8082;
+const PORT = process.env.NODE_PORT ? parseInt(process.env.NODE_PORT) : 8080;
 
 const isDev = process.env.NODE_ENV === "dev";
 const template = fs.readFileSync(resolve("./index.template.html"), "utf-8");
@@ -17,17 +17,17 @@ const spaTemplate = fs.readFileSync(
   "utf-8"
 );
 
-// 这里是偷懒的做法
-const { JSDOM } = require("jsdom"); // document undefined
-const dom = new JSDOM('<!DOCTYPE html><html lang="zh"><body></body></html>', {
-  url: "http://localhost:8088"
-});
-if (typeof window === "undefined") {
-  global.window = dom.window;
-  global.document = window.document;
-  global.navigator = window.navigator;
-  global.localStorage = window.localStorage;
-}
+// // 这里是偷懒的做法
+// const { JSDOM } = require("jsdom"); // document undefined
+// const dom = new JSDOM('<!DOCTYPE html><html lang="zh"><body></body></html>', {
+//   url: "http://localhost:8088",
+// });
+// if (typeof window === "undefined") {
+//   // global.window = dom.window;
+//   global.document = window.document;
+//   global.navigator = window.navigator;
+//   global.localStorage = window.localStorage;
+// }
 
 const { createBundleRenderer } = require("vue-server-renderer");
 const setupServer = require(`${
@@ -48,11 +48,11 @@ setupServer.setupServer(app, (bundle, options) => {
       // for component caching
       cache: new LRU({
         max: 1000,
-        maxAge: 1000 * 60 * 5
+        maxAge: 1000 * 60 * 5,
       }),
       // this is only neede when vue-server-renderer is npm-linked
       // basedir: resolve('../dist'),
-      runInNewContext: false
+      runInNewContext: false,
     })
   );
 });
@@ -66,7 +66,7 @@ async function ssrRequestHandle(ctx, next) {
     ssrHeadAddInfo: "",
     url: ctx.url,
     cookies: ctx.cookie || {}, // for cookie using
-    userAgent: ctx.header["user-agent"]
+    userAgent: ctx.header["user-agent"],
   };
 
   try {
@@ -112,7 +112,7 @@ const server = app
   .on("listening", () => {
     console.log(`server started at localhost:${PORT}`);
   })
-  .on("error", err => {
+  .on("error", (err) => {
     console.log("---server error---", err);
   });
 
