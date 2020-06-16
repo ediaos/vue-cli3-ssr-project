@@ -1,0 +1,28 @@
+{
+  // 编辑器保存自动格式化
+  "editor.formatOnSave": true,
+  // 锁紧字符
+  "editor.tabSize": 2,
+  // 自动在vscode顶部显示文件路径
+  "window.title": "${dirty}${activeEditorMedium}${separator}${rootName}",
+  // 搜索排除
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/dist": true
+  },
+  // 控制是否在搜索中跟踪符号链接，会导致cpu内存占有率过高
+  "search.followSymlinks": false,
+  // 自动fetch远程分支
+  "git.autofetch": true,
+  // eslint开启
+  "eslint.enable": true,
+  // eslint自动保存格式话
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  // 保存超时时长
+  "editor.codeActionsOnSaveTimeout": 2500,
+  //  依赖prettier配置文件来格式化
+  "prettier.requireConfig": true
+}

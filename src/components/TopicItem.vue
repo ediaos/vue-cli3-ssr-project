@@ -7,12 +7,12 @@
 
 <script>
 export default {
-  name: "TopicItem",
+  name: 'TopicItem',
   serverCacheKey: props => props.topicInfo.id, // for ssr cache item component
   props: {
     topicInfo: Object
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -12,6 +12,12 @@
 - 优化 dev 开发 ssr，通过双启动(ssr-server & client-dev-server)方式，实现前后端 dev 开发无感知,解决方案更加优雅
 - SEO 的支持，支持 tkd 以及 head 附加
 
+## v0.4.0
+
+- fix spa fetchDataMounted bug
+- add prettier and format
+- 控制 SSR 渲染不加载 三方 CSS 文件，改为 preload 加载
+
 ## v0.3.4
 
 - update npm package version
