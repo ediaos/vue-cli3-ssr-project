@@ -45,7 +45,7 @@ export default {
     this.isMounted = true
     const alreadyIncremented = !!this.topicsList
     if (!alreadyIncremented) {
-      this.fetchData().then(this.fetchDataMounted())
+      this.fetchData().then(this.fetchDataMounted)
     } else {
       this.fetchDataMounted()
     }
