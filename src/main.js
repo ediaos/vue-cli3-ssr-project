@@ -9,8 +9,12 @@ Vue.config.productionTip = true
 
 // for using vant components
 import Vant from 'vant'
-import 'vant/lib/index.css'
 Vue.use(Vant)
+// 控制服务端渲染时候，返回HTML移除三方css，转为 preload 加载，前提: 默认支持的 preload 加载
+if (process.env.VUE_ENV === 'client') {
+  require('vant/lib/index.css')
+}
+
 // global loading
 Vue.prototype.$loading = isLoading => {
   if (isLoading) {
