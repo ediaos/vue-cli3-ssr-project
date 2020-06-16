@@ -16,6 +16,7 @@
 
 - fix spa fetchDataMounted bug
 - add prettier and format
+- 控制 SSR 渲染不加载 三方 CSS 文件，改为 preload 加载
 
 ## v0.3.4
 
