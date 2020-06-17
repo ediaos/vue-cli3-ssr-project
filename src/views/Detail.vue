@@ -45,7 +45,7 @@ export default {
   beforeRouteUpdate(to, from, next) {
     // 一般建议路由变更采用计算属性或者store直接绑定
     // 特殊情况处理可以采用如下方案 重新注册数据返回处理
-    this.fetchData().then(this.fetchDataMounted())
+    this.fetchData().then(this.fetchDataMounted)
     next()
   },
   destroyed() {
