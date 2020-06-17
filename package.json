@@ -39,7 +39,7 @@
     "concurrently": "4.1.2",
     "cross-env": "6.0.0",
     "eslint": "6.4.0",
-    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-prettier": "3.1.1",
     "eslint-plugin-vue": "5.2.3",
     "koa-proxies": "0.8.1",
     "lodash.merge": "4.6.2",
