@@ -44,7 +44,7 @@
     "koa-proxies": "0.8.1",
     "lodash.merge": "4.6.2",
     "lru-cache": "5.1.1",
-    "node-sass": "4.12.0",
+    "node-sass": "4.14.1",
     "sass-loader": "8.0.0",
     "vue-template-compiler": "2.6.10",
     "webpack-node-externals": "1.7.2"
