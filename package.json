@@ -15,7 +15,7 @@
     "dist": "cross-env NODE_DEPLOY=t1 NODE_ENV=production node ./dist/server"
   },
   "dependencies": {
-    "axios": "0.19.0",
+    "axios": "1.6.0",
     "js-cookie": "2.2.1",
     "koa": "2.8.1",
     "koa-cookie": "1.0.0",
